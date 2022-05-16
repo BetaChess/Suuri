@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <big-int.h>
+#include <suurimath.h>
 
 #include <random>
 #include <cmath>
@@ -72,7 +72,7 @@ TEST(ConversionTests, ConvertionToString)
 
 			ASSERT_EQ(expected, result);
 		}
-	}	
+	}
 }
 
 

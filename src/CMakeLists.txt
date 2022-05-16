@@ -4,7 +4,9 @@ project(suuri)
 set(SOURCES
 	"big-int.h"
     "big-int.cpp"
- "suurimath.h")
+    "suurimath.h" 
+    "suurimath.cpp"
+)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 

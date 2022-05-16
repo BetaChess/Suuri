@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <big-int.h>
+#include <suurimath.h>
 
 using namespace suuri;
 
@@ -8,58 +8,162 @@ using namespace suuri;
 TEST(LogicOperatorTests, Equals)
 {
 	{
-		BigInt<uint64_t, 10> a = 2346;
-		BigInt<uint64_t, 10> b = { {6, 4, 3, 2} };
-
-		EXPECT_TRUE(a == b);
-	}
-
-	{
 		BigInt<int64_t, 10> a = 2346;
 		BigInt<int64_t, 10> b = { {6, 4, 3, 2} };
 
-		EXPECT_TRUE(a == b);
+		EXPECT_EQ(a, b);
 	}
 
 	{
-		BigInt<uint64_t, 9223372036854775808ULL> a = 2346;
-		BigInt<uint64_t, 9223372036854775808ULL> b = { {6, 4, 3, 2} };
+		BigInt_t a = 2346;
+		BigInt_t b = { {6, 4, 3, 2} };
 
-		EXPECT_FALSE(a == b);
+		EXPECT_NE(a, b);
 	}
 
 	{
-		BigInt<int64_t, 9223372036854775808LL> a = 2346;
-		BigInt<int64_t, 9223372036854775808LL> b = { {2346} };
+		BigInt_t a = 2346;
+		BigInt_t b = { {2346} };
 
-		EXPECT_TRUE(a == b);
+		EXPECT_EQ(a, b);
 	}
 
 	{
-		BigInt<uint64_t, 9223372036854775808ULL> a = 72589324759;
-		BigInt<uint64_t, 9223372036854775808ULL> b = { {6, 4, 3, 2} };
+		BigInt_t a = 72589324759;
+		BigInt_t b = { {72589324759} };
 
-		EXPECT_FALSE(a == b);
+		EXPECT_EQ(a, b);
 	}
 
 	{
-		BigInt<int64_t, 9223372036854775808LL> a = 72589324759;
-		BigInt<int64_t, 9223372036854775808LL> b = { {72589324759} };
+		BigInt_t a = 72589324759;
+		BigInt_t b = { {72589324759}, true };
 
-		EXPECT_TRUE(a == b);
+		EXPECT_NE(a, b);
 	}
 
 	{
-		BigInt<uint64_t, 72589324758> a = 72589324759;
-		BigInt<uint64_t, 72589324758> b = { {1, 1} };
+		BigInt<int64_t, 72589324758> a = 72589324759;
+		BigInt<int64_t, 72589324758> b = { {1, 1} };
 
-		EXPECT_TRUE(a == b);
+		EXPECT_EQ(a, b);
 	}
 
-	
+	{
+		BigInt<int8_t, 2> a = 8;
+		BigInt<int8_t, 2> b = { {0, 0, 0, 1} };
+
+		EXPECT_EQ(a, b);
+	}
+
+	{
+		BigInt<int8_t, 2> a = 5;
+		BigInt<int8_t, 2> b = { {1, 0, 1} };
+
+		EXPECT_EQ(a, b);
+	}
+
+	{
+		BigInt<int8_t, 2> a = 5;
+		BigInt<int8_t, 2> b = { {0, 0, 1} };
+
+		EXPECT_NE(a, b);
+	}
+
+	{
+		BigInt<int8_t, 2> a = 5;
+		BigInt<int8_t, 2> b = { {1, 0, 1}, true };
+
+		EXPECT_NE(a, b);
+	}
+
 }
 
 TEST(LogicOperatorTests, LessThan) {
+	{
+		BigInt_t a = 4324237;
+		BigInt_t b = 4324238;
 
+		EXPECT_LT(a, b);
+	}
+
+	{
+		BigInt_t a = -432423423423;
+		BigInt_t b = 0;
+
+		EXPECT_LT(a, b);
+	}
+
+	{
+		BigInt_t a = { {432423423423}, true };
+		BigInt_t b = 0;
+
+		EXPECT_LT(a, b);
+	}
+
+	{
+		BigInt_t a = 0;
+		BigInt_t b = 0;
+
+		EXPECT_FALSE(a < b);
+	}
+
+	{
+		BigInt_t a = 0;
+		BigInt_t b = {{0}, true};
+
+		EXPECT_FALSE(a < b);
+	}
+
+	{
+		BigInt_t a = { {0}, true };
+		BigInt_t b = 0;
+
+		EXPECT_FALSE(a < b);
+	}
 }
 
+TEST(LogicOperatorTests, GreaterThan)
+{
+	{
+		BigInt_t a = 4324238;
+		BigInt_t b = 4324237;
+
+		EXPECT_GT(a, b);
+	}
+
+	{
+		BigInt_t a = 0;
+		BigInt_t b = -432423423423;
+
+		EXPECT_GT(a, b);
+	}
+
+	{
+		BigInt_t a = 0;
+		BigInt_t b = { {432423423423}, true };
+
+		EXPECT_GT(a, b);
+	}
+
+	{
+		BigInt_t a = 0;
+		BigInt_t b = 0;
+
+		EXPECT_FALSE(a > b);
+	}
+
+	{
+		BigInt_t a = 0;
+		BigInt_t b = { {0}, true };
+
+		EXPECT_FALSE(a > b);
+	}
+
+	{
+		BigInt_t a = { {0}, true };
+		BigInt_t b = 0;
+
+		EXPECT_FALSE(a > b);
+	}
+}
