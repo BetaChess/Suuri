@@ -1,7 +1,7 @@
 #ifndef SUURIMATH_H
 #define SUURIMATH_H
 
-#include "big-int.h"
+#include "suuri-typetraits.h"
 
 namespace suuri
 {
@@ -43,22 +43,6 @@ template<
 	return isEven * tempSqr + !isEven * x * tempSqr;
 }
 
-template<>
-[[nodiscard]] constexpr uint64_t pow<uint64_t>(uint64_t x, uint64_t y) noexcept
-{
-	uint64_t ret = 1ULL;
-
-	y & 64 ? ret *= ret * x : ret *= ret;
-	y & 32 ? ret *= ret * x : ret *= ret;
-	y & 16 ? ret *= ret * x : ret *= ret;
-	y & 8 ? ret *= ret * x : ret *= ret;
-	y & 4 ? ret *= ret * x : ret *= ret;
-	y & 2 ? ret *= ret * x : ret *= ret;
-	y & 1 ? ret *= ret * x : ret *= ret;
-
-	return ret;
-}
-
 // Calculates a compile-time known base to the power of y.
 template<
 	int64_t base,
@@ -94,8 +78,16 @@ template<
 };
 
 
-// TYPEDEFS
-typedef BigInt<int64_t, static_cast<int64_t>(pow2(31U))> BigInt_t;
+////// TYPEDEFS
+
+/// Standard bigint type for doing large calculations.
+typedef BigInt<int64_t, static_cast<int64_t>(pow2(31ULL))> BigInt_t;
+/// Hexadecimal bigint type.
+typedef BigInt<int8_t, 16> BigInt16_t;
+/// Decimal (base 10) bigint type.
+typedef BigInt<int8_t, 10> BigInt10_t;
+/// Binary bigint type.
+typedef BigInt<int8_t, 2> BigInt2_t;
 
 } // namespace suuri
 

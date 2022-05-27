@@ -80,7 +80,7 @@ TEST(ConversionTests, CastTest)
 {
 	//// Test base 10 values
 	{
-		BigInt<int64_t, 10> testInt = { {0, 1, 9} };
+		BigInt10_t testInt = { {0, 1, 9} };
 
 		EXPECT_EQ(testInt.cast<int>(), 910);
 		EXPECT_EQ(testInt.cast_unsafe<int>(), 910);
@@ -90,6 +90,20 @@ TEST(ConversionTests, CastTest)
 
 		EXPECT_EQ(testInt.cast<int>(), 32567);
 		EXPECT_EQ(testInt.cast_unsafe<int>(), 32567);
+	}
+
+	//// Test throws
+	{
+		BigInt_t test = { {1, 1, 1, 1, 1} };
+
+		EXPECT_THROW(test.cast<int>(), std::overflow_error);
+	}
+
+	//// Test throws
+	{
+		BigInt_t test = { {1, 1, 1, 1, 1}, true };
+
+		EXPECT_THROW(test.cast<int>(), std::underflow_error);
 	}
 }
 

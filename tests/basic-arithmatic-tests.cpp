@@ -417,7 +417,7 @@ TEST(BasicArithmaticTests, SubtractionAssignment)
 		std::uniform_int_distribution<int16_t> dis(std::numeric_limits<int16_t>::min() / 2, std::numeric_limits<int16_t>::max() / 2);
 
 		/// RANDOM TEST
-		for (size_t i = 0; i < 1000; i++)
+		for (size_t i = 0; i < 10000; i++)
 		{
 			auto aV = dis(gen);
 			auto bV = dis(gen);
@@ -428,8 +428,6 @@ TEST(BasicArithmaticTests, SubtractionAssignment)
 			auto expectedVal = aV - bV;
 			BigInt<int16_t, 10> expected = expectedVal;
 			auto& result = a -= b;
-
-			bool test = expected == result;
 
 			ASSERT_EQ(expected, result) << "Values were: " << aV << " and " << bV;
 		}
@@ -567,9 +565,94 @@ TEST(BasicArithmaticTests, Subtraction)
 			BigInt<int16_t, 10> expected = expectedVal;
 			auto result = a - b;
 
-			bool test = expected == result;
-
 			ASSERT_EQ(expected, result) << "Values were: " << aV << " and " << bV;
 		}
 	}
+}
+
+TEST(BasicArithmaticTests, DivisionAssignment)
+{
+	{
+		int64_t aT = 32424;
+		int64_t bT = 0;
+
+		BigInt_t a = aT;
+		BigInt_t b = bT;
+
+		EXPECT_ANY_THROW(a /= b);
+	}
+
+	{
+		// Create randomizer
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<int16_t> dis(std::numeric_limits<int16_t>::min() / 2, std::numeric_limits<int16_t>::max() / 2);
+
+		/// RANDOM TEST
+		for (size_t i = 0; i < 10000; i++)
+		{
+			auto aV = dis(gen);
+			auto bV = dis(gen);
+
+			BigInt10_t a = aV;
+			BigInt10_t b = bV;
+
+			if (bV == 0)
+			{
+				EXPECT_ANY_THROW(a /= b) << "Values were: " << aV << " and " << bV;
+			}
+			else
+			{
+				auto expectedVal = aV / bV;
+				BigInt10_t expected = expectedVal;
+				auto& result = a /= b;
+
+				ASSERT_EQ(expected, result) << "Values were: " << aV << " and " << bV;
+			}
+		}
+	}
+}
+
+TEST(BasicArithmaticTests, Division)
+{
+	{
+		int64_t aT = 32424;
+		int64_t bT = 0;
+
+		BigInt_t a = aT;
+		BigInt_t b = bT;
+
+		EXPECT_ANY_THROW(a / b);
+	}
+
+
+	{
+		// Create randomizer
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<int16_t> dis(std::numeric_limits<int16_t>::min() / 2, std::numeric_limits<int16_t>::max() / 2);
+
+		/// RANDOM TEST
+		for (size_t i = 0; i < 10000; i++)
+		{
+			auto aV = dis(gen);
+			auto bV = dis(gen);
+
+			BigInt10_t a = aV;
+			BigInt10_t b = bV;
+
+			if (bV == 0)
+			{
+				EXPECT_ANY_THROW(a / b) << "Values were: " << aV << " and " << bV;
+			}
+			else
+			{
+				auto expectedVal = aV / bV;
+				BigInt10_t expected = expectedVal;
+				auto result = a / b;
+
+				ASSERT_EQ(expected, result) << "Values were: " << aV << " and " << bV;
+			}
+		}
+	}	
 }
