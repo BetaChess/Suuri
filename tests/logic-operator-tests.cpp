@@ -5,7 +5,7 @@
 using namespace suuri;
 
 
-TEST(LogicOperatorTests, Equals)
+TEST(LogicOperatorTestsInt, Equals)
 {
 	{
 		BigInt<int64_t, 10> a = 2346;
@@ -79,7 +79,8 @@ TEST(LogicOperatorTests, Equals)
 
 }
 
-TEST(LogicOperatorTests, LessThan) {
+TEST(LogicOperatorTestsInt, LessThan)
+{
 	{
 		BigInt_t a = 4324237;
 		BigInt_t b = 4324238;
@@ -110,7 +111,7 @@ TEST(LogicOperatorTests, LessThan) {
 
 	{
 		BigInt_t a = 0;
-		BigInt_t b = {{0}, true};
+		BigInt_t b = { {0}, true };
 
 		EXPECT_FALSE(a < b);
 	}
@@ -123,7 +124,7 @@ TEST(LogicOperatorTests, LessThan) {
 	}
 }
 
-TEST(LogicOperatorTests, GreaterThan)
+TEST(LogicOperatorTestsInt, GreaterThan)
 {
 	{
 		BigInt_t a = 4324238;
@@ -167,3 +168,4 @@ TEST(LogicOperatorTests, GreaterThan)
 		EXPECT_FALSE(a > b);
 	}
 }
+

@@ -6,7 +6,10 @@ set(SOURCES
     "big-int.cpp"
     "suurimath.h" 
     "suurimath.cpp"
- "suuri-typetraits.h")
+    "suuri-typetraits.h" 
+    "big-float.h" 
+    "big-float.cpp"
+)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 

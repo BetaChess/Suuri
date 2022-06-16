@@ -23,7 +23,7 @@ constexpr auto abs(T const& x) noexcept
 
 // Calculates x to the power of y.
 template<
-	typename T, 
+	typename T,
 	std::enable_if_t<!isBigInt_v<T>>* = nullptr,
 	std::enable_if_t<std::is_integral_v<T>>* = nullptr,
 	std::enable_if_t<std::is_unsigned_v<T>>* = nullptr
@@ -54,7 +54,7 @@ template<
 [[nodiscard]] constexpr T pow(T y) noexcept
 {
 	constexpr T x = static_cast<T>(base);
-	
+
 	if (y == 0) [[unlikely]]
 		return 1;
 
@@ -88,6 +88,13 @@ typedef BigInt<int8_t, 16> BigInt16_t;
 typedef BigInt<int8_t, 10> BigInt10_t;
 /// Binary bigint type.
 typedef BigInt<int8_t, 2> BigInt2_t;
+
+
+/// Standard bigfloat type for doing large calculations.
+typedef BigFloat<int64_t, static_cast<int64_t>(pow2(31ULL))> BigFloat_t;
+/// Decimal (base 10) bigfloat type.
+typedef BigFloat<int8_t, 10> BigFloat10_t;
+
 
 } // namespace suuri
 

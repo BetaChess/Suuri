@@ -2,6 +2,7 @@
 #define SUURI_TYPETRAITS_H
 
 #include "big-int.h"
+#include "big-float.h"
 
 #include <type_traits>
 

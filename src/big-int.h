@@ -1,5 +1,8 @@
-#ifndef BIGUINT_H
-#define BIGUINT_H
+#ifndef BIGINT_H
+#define BIGINT_H
+
+// Big Float is used for division
+#include "big-float.h"
 
 #include <iostream>
 #include <cmath>
@@ -27,7 +30,7 @@ public:
 
 	// Constructors
 
-	constexpr BigInt() : digits_(1, 0), negative_(false) {}
+	constexpr BigInt() : digits_(0, 0), negative_(false) {}
 	constexpr BigInt(int64_t initialValue) : negative_(initialValue < 0)
 	{
 		int64_t div = std::abs(initialValue);
@@ -43,6 +46,9 @@ public:
 	constexpr BigInt(std::vector<DigitType>&& digits, bool negative = false) :
 		digits_{ digits }, negative_(negative)
 	{}
+	constexpr BigInt(const std::vector<DigitType>& digits, bool negative = false) :
+		digits_{ digits }, negative_(negative)
+	{}
 
 	// Public methods
 	static constexpr DigitType base() noexcept
@@ -55,8 +61,7 @@ public:
 	/// </summary>
 	std::string str() const noexcept
 	{
-
-		return "";
+		return cast_bigint<int8_t, 10>().str();
 	}
 
 	/// <summary>
@@ -64,8 +69,7 @@ public:
 	/// </summary>
 	std::string str_hex() const noexcept
 	{
-
-		return "";
+		return cast_bigint<int8_t, 16>().str();
 	}
 
 	/// <summary>
@@ -73,14 +77,31 @@ public:
 	/// </summary>
 	std::string str_bin() const noexcept
 	{
-
-		return "";
+		return cast_bigint<int8_t, 2>().str();
 	}
 
-	template<typename newDigitT = int8_t, digitT newBaseVal = 10>
+	template<typename newDigitT = int8_t, newDigitT newBaseVal = 10>
 	constexpr BigInt<newDigitT, newBaseVal> cast_bigint() const noexcept
 	{
-		return 0;
+		BigInt<newDigitT, newBaseVal> ret;
+		ret.set_negative(negative_);
+		auto div = *this;
+		
+		do
+		{
+			auto division_result = div.divide_get_quo_rem(newBaseVal);
+			div = division_result.quotient;
+			division_result.remainder.negative_ = false;
+
+			ret.digits_push_back(division_result.remainder.cast_unsafe<newDigitT>());
+		} while (!div.is_zero());
+
+		return ret;
+	}
+	template<typename T2>
+	constexpr T2 cast_bigint() const noexcept
+	{
+		return cast_bigint<typename T2::DigitType, T2::base()>();
 	}
 
 	template<typename T>
@@ -126,6 +147,18 @@ public:
 		return val;
 	}
 	
+	template<typename T = DigitType, T baseVal2 = baseVal>
+	constexpr BigFloat<T, baseVal2> cast_bigfloat() const
+	{
+		return { digits_, negative_, 0 };
+	}
+	template<typename T2>
+	constexpr T2 cast_bigfloat() const
+	{
+		return BigFloat<typename T2::DigitType, T2::base()>{ digits_, negative_, 0 };
+	}
+
+	
 	constexpr bool is_negative() const noexcept
 	{
 		return negative_;
@@ -138,6 +171,11 @@ public:
 	constexpr this_t& negate() noexcept
 	{
 		negative_ = !negative_;
+		return *this;
+	}
+	constexpr this_t& set_negative(bool negative)
+	{
+		negative_ = negative;
 		return *this;
 	}
 
@@ -303,6 +341,15 @@ public:
 		return *this;
 	}
 
+	/// <summary>
+	/// Simply pushes a given digits to the most significant spot.
+	/// </summary>
+	constexpr this_t& digits_push_back(const DigitType& digit) noexcept
+	{
+		digits_.push_back(digit);
+		return *this;
+	}
+
 	
 	// OPERATOR OVERLOADS
 	// LOGIC OPERATORS
@@ -321,6 +368,8 @@ public:
 	{
 		return !operator==(other);
 	}
+	
+	////////// BUGBUGBUGBUGBUGBUGBUGBUGBUGBUGBUGBUG
 	constexpr bool operator<(const this_t& other) const
 	{
 		if (digits_.size() == 1 && digits_[0] == other.digits_[0] && digits_[0] == 0)
@@ -438,37 +487,93 @@ public:
 		return *this;
 	}
 
+	constexpr this_t& operator/=(const this_t& divisor)
+	{
+		auto result = newton_raphson_divide(divisor);
+		*this = std::move(result);
+
+		return *this;
+	}
+	constexpr this_t operator/(const this_t& divisor) const
+	{
+		auto copy = *this;
+		return copy.newton_raphson_divide(divisor);
+	}
+	constexpr this_t& operator%=(const this_t& divisor)
+	{
+		auto res = divide_get_quo_rem(divisor);
+		*this = std::move(res.remainder);
+		return *this;
+	}
+	constexpr this_t operator%(const this_t& divisor) const
+	{
+		auto res = divide_get_quo_rem(divisor);
+
+		return res.remainder;
+	}
+
+	constexpr this_t& operator*=(const this_t& other)
+	{
+		*this = *this * other;
+		
+		return *this;
+	}
+	constexpr this_t operator*(const this_t& other) const
+	{
+		this_t ret;
+		ret.digits_.resize(digits_.size() + other.digits_.size());
+
+		for (size_t i = 0; i < digits_.size(); i++)
+		{
+			for (size_t j = 0; j < other.digits_.size(); j++)
+			{
+				ret.digits_[i + j] += digits_[i] * other.digits_[j];
+				ret.digits_[i + j + 1] += ret.digits_[i + j] / baseVal;
+				ret.digits_[i + j] %= baseVal;
+			}
+		}
+
+		ret.negative_ = negative_ ^ other.negative_;
+		if (ret.digits_.back() == 0)
+			ret.digits_.pop_back();
+
+		return ret;
+	}
+
+	// Division methods
 	/// <summary>
 	/// Dedicated devide method, in case you want both the quotient and remainder without extra computation. 
 	/// </summary>
 	/// <param name="remainder_out">: The remainder reference to be written to. IT WILL BE IN REVERSE ORDER AND HAVE LEADING ZEROES. Use "fix_remainder" to fix the remainder to the normal format. </param>
-	constexpr this_t divide(const this_t& dividend, this_t& remainder_out) const
+	constexpr this_t long_divide(const this_t& divisor, this_t& remainder_out) const
 	{
-		if (dividend.is_zero())
+		if (divisor.is_zero())
 			throw std::runtime_error("Error dividing by zero");
 
-		// If this is less than the dividend (digits, since we don't care about the sign), then this is not divisible by dividend. 
-		if (digits_less_than(dividend))
+		// If this is less than the divisor (digits, since we don't care about the sign), then this is not divisible by divisor. 
+		if (digits_less_than(divisor))
 		{
 			remainder_out = *this;
+			// This is redundant, but necesary because of how division is currently implemented. Might be changed later.
+			std::reverse(remainder_out.digits_.begin(), remainder_out.digits_.end());
 			return this_t{ {0} };
 		}
 
-		const auto dividendSize = dividend.digits_.size();
+		const auto dividendSize = divisor.digits_.size();
 
 		auto compareFunction = [&]() -> bool {
 			// Get the relevant part of the remainder (the last digits are the important ones).
-			// The remainder will only ever have the same number of digits as the dividend or one more.
+			// The remainder will only ever have the same number of digits as the divisor or one more.
 			auto remainderCurr = remainder_out.digits_.end() - dividendSize;
-			auto dividendCurr = dividend.digits_.end() - 1;
+			auto dividendCurr = divisor.digits_.end() - 1;
 
-			// If the remainder has an extra digit, it must be larger than the dividend
+			// If the remainder has an extra digit, it must be larger than the divisor
 			if (*(remainderCurr - 1) > 0)
 				return true;
 
 			remainderCurr--;
 
-			// Check each digit until the end. If a digit is greater than the corresponding digit of the dividend, then the dividend must be smaller.
+			// Check each digit until the end. If a digit is greater than the corresponding digit of the divisor, then the divisor must be smaller.
 			while (1)
 			{
 				remainderCurr++;
@@ -489,12 +594,12 @@ public:
 
 		{
 			auto currentDigit = digits_.crbegin();
-			currentDigit += dividend.digits_.size() - 1;
+			currentDigit += divisor.digits_.size() - 1;
 
 			remainder_out.digits_ = { {0} };
 			remainder_out.digits_.insert(remainder_out.digits_.end(), digits_.crbegin(), currentDigit);
 		}
-		auto currentDigit = digits_.cend()  - dividend.digits_.size() + 1;
+		auto currentDigit = digits_.cend() - divisor.digits_.size() + 1;
 
 		// The quotient will also be reverse order, so we need to reverse it before returning.
 		this_t quotient;
@@ -504,16 +609,17 @@ public:
 			currentDigit--;
 
 			remainder_out.digits_.push_back(*currentDigit);
-				
-			DigitType count = 0; // Counts the number of times the dividend can be subtracted from the current remainder. This will be the next digit.
+
+
+			DigitType count = 0; // Counts the number of times the divisor can be subtracted from the current remainder. This will be the next digit.
 			while (compareFunction())
 			{
 				count++;
 
 				auto remIt = remainder_out.digits_.end() - 1; // start at the last digit (least significant digit).
-				auto divIt = dividend.digits_.cbegin(); // start at the first digit (least significant digit).
+				auto divIt = divisor.digits_.cbegin(); // start at the first digit (least significant digit).
 
-				while (divIt != dividend.digits_.cend())
+				while (divIt != divisor.digits_.cend())
 				{
 					*remIt -= *divIt;
 					bool carry = (*remIt < 0);
@@ -531,35 +637,110 @@ public:
 		std::reverse(quotient.digits_.begin(), quotient.digits_.end());
 		quotient.remove_leading_zeroes();
 
-		quotient.negative_ = negative_ ^ dividend.negative_;
-		remainder_out.negative_ = quotient.negative_;
+		quotient.negative_ = negative_ ^ divisor.negative_;
+		remainder_out.negative_ = negative_;
 
 		return quotient;
 	}
-	
+
 	/// <summary>
 	/// Dedicated devideAssign method, in case you want both the quotient and remainder without extra computation. 
 	/// </summary>
 	/// <param name="remainder_out">: The remainder reference to be written to. IT WILL BE IN REVERSE ORDER AND HAVE LEADING ZEROES. Use "fix_remainder" to fix the remainder to the normal format. </param>
-	constexpr this_t& divideAssign(const this_t& dividend, this_t& remainder_out)
+	constexpr this_t& long_divide_assign(const this_t& divisor, this_t& remainder_out)
 	{
-		*this = divide(dividend, remainder_out);
+		*this = long_divide(divisor, remainder_out);
 
 		return *this;
 	}
+
+	constexpr this_t& newton_raphson_divide(const this_t& divisor)
+	{
+		auto n = cast_bigfloat();
+		auto d = divisor.cast_bigfloat();
+
+		auto result = n / d;
+		*this = create_from_float(result);
+
+		return *this;
+
+		//if (divisor.is_zero())
+		//	throw std::runtime_error("Error dividing by zero");
+
+		//// If this is less than the divisor (digits, since we don't care about the sign), then this is not divisible by divisor. 
+		//if (digits_less_than(divisor))
+		//{
+		//	return this_t{ {0} };
+		//}
+		//
+		//if (divisor == this_t{ {1} })
+		//	return *this;
+
+		////const DigitType halfBase = baseVal / 2;
+
+		//const size_t digitsToFind = digits_.size() - divisor.digits_.size() + 2;
+
+		//this_t X = (*this) * 1882352941176 + 2823529411764;
+		//size_t digitDiff = X.digits_.size() - this->digits_.size();
+
+		//this_t bigTwo = 2;
+		//bigTwo.digit_move_ms(0, 1);
+		//size_t currPow = 1;
+
+		//size_t S = static_cast<size_t>(
+		//	std::log2(digitsToFind + 1)
+		//	) + 1;
+		//	
+		//
+		//for (size_t i = 0; i < 10; i++)
+		//{
+		//	X = X * (bigTwo - divisor * X);
+		//	bigTwo.digit_move_ms(bigTwo.digits_.size() - 1, currPow);
+		//	currPow += currPow;
+		//}
+
+		//auto quotient = *this * X;
+		//quotient.digits_.erase(quotient.digits_.begin(), quotient.digits_.begin() + currPow);
+
+		//return quotient;
+	}
+
+
+	struct QuotientRemainderStruct
+	{
+		this_t quotient;
+		this_t remainder;
+	};
+	constexpr QuotientRemainderStruct divide_get_quo_rem(const this_t& divisor) const
+	{
+		this_t copy = *this;
+		this_t quotient = copy.newton_raphson_divide(divisor);
+		// Fails for quotient == 0 and this == 255
+		this_t remainder = *this - quotient * divisor;
+		remainder.negative_ = negative_;
+
+		return {quotient, remainder};
+	}
+
+	// Multiplication methods
+
+
+	// Static methods
+	constexpr static this_t get_base_power(uint64_t y)
+	{
+		this_t ret{ {}, false };
+		ret.digits_.resize(std::min(1ULL, y));
+		ret.digits_[y] = 1;
+		return ret;
+	}
+
+	constexpr static this_t create_from_float(BigFloat<DigitType, baseVal> bfloat)
+	{
+		bfloat.clip_to_n_decimals(0);
+
+		return { std::move(bfloat.get_digits_reference()), bfloat.is_negative() };
+	}
 	
-	constexpr this_t& operator/=(const this_t& dividend)
-	{
-		this_t rem{};
-		return divideAssign(dividend, rem);
-	}
-	constexpr this_t operator/(const this_t& dividend) const
-	{
-		this_t rem{};
-		return divide(dividend, rem);
-	}
-
-
 
 	// FRIENDS
 	friend std::ostream& operator<<(std::ostream& out, const this_t& rhs)
@@ -574,6 +755,22 @@ private:
 	bool negative_;
 
 	// Private methods
+
+	/// <summary>
+	/// Moves a specific digit n digits to the end of the vector (towards more significant).
+	/// </summary>
+	this_t& digit_move_ms(size_t index, size_t n)
+	{
+		if (digits_.size() < index + n + 1)
+			digits_.resize(index + n + 1);
+		
+		digits_[index + n] = digits_[index];
+		digits_[index] = 0;
+
+		return *this;
+	}
+
+	// Static methods
 	[[nodiscard]] static constexpr uint64_t pow(uint64_t y) noexcept
 	{
 		constexpr uint64_t x = static_cast<uint64_t>(baseVal);
@@ -607,4 +804,4 @@ std::string BigInt<int8_t, 2>::str_bin() const noexcept;
 
 } // namespace suuri ################
 
-#endif // BIGUINT_H
+#endif // BIGINT_H

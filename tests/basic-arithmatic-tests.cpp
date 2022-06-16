@@ -8,7 +8,7 @@
 using namespace suuri;
 
 
-TEST(BasicArithmaticTests, AdditionAssignment)
+TEST(BasicArithmaticTestsInt, AdditionAssignment)
 {
 	{
 		int64_t aT = 32424;
@@ -53,11 +53,11 @@ TEST(BasicArithmaticTests, AdditionAssignment)
 	}
 
 	{
-		BigInt<int8_t, 2> a =			{ {0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1} };
-		BigInt<int8_t, 2> b =			{ {1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1} };
+		BigInt<int8_t, 2> a = { {0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1} };
+		BigInt<int8_t, 2> b = { {1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1} };
 
-		BigInt<int8_t, 2> expected1 =	{ {1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1} };
-		BigInt<int8_t, 2> expected2 =	{ 2493753 };
+		BigInt<int8_t, 2> expected1 = { {1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1} };
+		BigInt<int8_t, 2> expected2 = { 2493753 };
 
 		ASSERT_TRUE(expected1 == expected2);
 
@@ -158,7 +158,7 @@ TEST(BasicArithmaticTests, AdditionAssignment)
 	}
 }
 
-TEST(BasicArithmaticTests, Addition)
+TEST(BasicArithmaticTestsInt, Addition)
 {
 	{
 		int64_t aT = 32424;
@@ -298,7 +298,7 @@ TEST(BasicArithmaticTests, Addition)
 	}
 }
 
-TEST(BasicArithmaticTests, SubtractionAssignment)
+TEST(BasicArithmaticTestsInt, SubtractionAssignment)
 {
 	{
 		int64_t aT = 32424;
@@ -307,7 +307,7 @@ TEST(BasicArithmaticTests, SubtractionAssignment)
 		BigInt<int64_t, 10ULL> a = aT;
 		BigInt<int64_t, 10ULL> b = bT;
 
-		auto expected = aT - bT ;
+		auto expected = aT - bT;
 		auto& result = a -= b;
 
 		EXPECT_EQ(expected, result);
@@ -365,13 +365,13 @@ TEST(BasicArithmaticTests, SubtractionAssignment)
 		uint32_t t4 = 0b111111111110111111101;
 
 		const auto t3 = t2 - t1;*/
-			
-		BigInt<int32_t, 2> a =			{ {0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1} };
-		BigInt<int32_t, 2> b =			{ {1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1} };
 
-		BigInt<int32_t, 2> expected1 =	{ {1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, true };
+		BigInt<int32_t, 2> a = { {0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1} };
+		BigInt<int32_t, 2> b = { {1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1} };
+
+		BigInt<int32_t, 2> expected1 = { {1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, true };
 		BigInt<int32_t, 2> expected2 = -2096637;
-		
+
 		ASSERT_EQ(expected1, expected2);
 
 		auto& result = a -= b;
@@ -381,10 +381,10 @@ TEST(BasicArithmaticTests, SubtractionAssignment)
 	}
 
 	{
-		BigInt<int8_t, 2> a =			{ {0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1} };
-		BigInt<int8_t, 2> b =			{ {1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1} };
+		BigInt<int8_t, 2> a = { {0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1} };
+		BigInt<int8_t, 2> b = { {1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1} };
 
-		BigInt<int8_t, 2> expected1 =	{ {1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, true };
+		BigInt<int8_t, 2> expected1 = { {1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, true };
 		BigInt<int8_t, 2> expected2 = -2096637;
 
 		ASSERT_EQ(expected1, expected2);
@@ -434,7 +434,7 @@ TEST(BasicArithmaticTests, SubtractionAssignment)
 	}
 }
 
-TEST(BasicArithmaticTests, Subtraction)
+TEST(BasicArithmaticTestsInt, Subtraction)
 {
 	{
 		int64_t aT = 32424;
@@ -570,7 +570,7 @@ TEST(BasicArithmaticTests, Subtraction)
 	}
 }
 
-TEST(BasicArithmaticTests, DivisionAssignment)
+TEST(BasicArithmaticTestsInt, DivisionAssignment)
 {
 	{
 		int64_t aT = 32424;
@@ -613,7 +613,7 @@ TEST(BasicArithmaticTests, DivisionAssignment)
 	}
 }
 
-TEST(BasicArithmaticTests, Division)
+TEST(BasicArithmaticTestsInt, Division)
 {
 	{
 		int64_t aT = 32424;
@@ -654,5 +654,149 @@ TEST(BasicArithmaticTests, Division)
 				ASSERT_EQ(expected, result) << "Values were: " << aV << " and " << bV;
 			}
 		}
-	}	
+	}
 }
+
+TEST(BasicArithmaticTestsInt, ModuloAssignment)
+{
+	{
+		int64_t aT = 32424;
+		int64_t bT = 0;
+
+		BigInt_t a = aT;
+		BigInt_t b = bT;
+
+		EXPECT_ANY_THROW(a %= b);
+	}
+
+	{
+		// Create randomizer
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<int16_t> dis(std::numeric_limits<int16_t>::min() / 2, std::numeric_limits<int16_t>::max() / 2);
+
+		/// RANDOM TEST
+		for (size_t i = 0; i < 10000; i++)
+		{
+			auto aV = dis(gen);
+			auto bV = dis(gen);
+
+			BigInt10_t a = aV;
+			BigInt10_t b = bV;
+
+			if (bV == 0)
+			{
+				EXPECT_ANY_THROW(a %= b) << "Values were: " << aV << " and " << bV;
+			}
+			else
+			{
+				auto expectedVal = aV % bV;
+				BigInt10_t expected = expectedVal;
+				auto& result = a %= b;
+
+				ASSERT_EQ(expected, result) << "Values were: " << aV << " and " << bV;
+			}
+		}
+	}
+}
+
+TEST(BasicArithmaticTestsInt, Modulo)
+{
+	{
+		int64_t aT = 32424;
+		int64_t bT = 0;
+
+		BigInt_t a = aT;
+		BigInt_t b = bT;
+
+		EXPECT_ANY_THROW(a % b);
+	}
+
+
+	{
+		// Create randomizer
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<int16_t> dis(std::numeric_limits<int16_t>::min() / 2, std::numeric_limits<int16_t>::max() / 2);
+
+		/// RANDOM TEST
+		for (size_t i = 0; i < 10000; i++)
+		{
+			auto aV = dis(gen);
+			auto bV = dis(gen);
+
+			BigInt10_t a = aV;
+			BigInt10_t b = bV;
+
+			if (bV == 0)
+			{
+				EXPECT_ANY_THROW(a % b) << "Values were: " << aV << " and " << bV;
+			}
+			else
+			{
+				auto expectedVal = aV % bV;
+				BigInt10_t expected = expectedVal;
+				auto result = a % b;
+
+				ASSERT_EQ(expected, result) << "Values were: " << aV << " and " << bV;
+			}
+		}
+	}
+}
+
+TEST(BasicArithmaticTestsInt, MultiplicationAssignment)
+{
+	{
+		// Create randomizer
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<int16_t> dis(std::numeric_limits<int16_t>::min() / 2, std::numeric_limits<int16_t>::max() / 2);
+
+		/// RANDOM TEST
+		for (size_t i = 0; i < 10000; i++)
+		{
+			auto aV = dis(gen);
+			auto bV = dis(gen);
+
+			BigInt10_t a = aV;
+			BigInt10_t b = bV;
+
+
+			auto expectedVal = aV * bV;
+			BigInt10_t expected = expectedVal;
+			auto& result = a *= b;
+
+			ASSERT_EQ(expected, result) << "Values were: " << aV << " and " << bV;
+		}
+	}
+}
+
+TEST(BasicArithmaticTestsInt, Multiplication)
+{
+	{
+		// Create randomizer
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<int16_t> dis(std::numeric_limits<int16_t>::min() / 2, std::numeric_limits<int16_t>::max() / 2);
+
+		/// RANDOM TEST
+		for (size_t i = 0; i < 10000; i++)
+		{
+			auto aV = dis(gen);
+			auto bV = dis(gen);
+
+			BigInt10_t a = aV;
+			BigInt10_t b = bV;
+
+
+			auto expectedVal = aV * bV;
+			BigInt10_t expected = expectedVal;
+			auto result = a * b;
+
+			ASSERT_EQ(expected, result) << "Values were: " << aV << " and " << bV;
+		}
+	}
+}
+
+
+
