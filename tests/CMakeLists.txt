@@ -3,7 +3,7 @@
 project("suuri_library_tests")
 
 set(SOURCES
-
+	int_tests/comparison.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

@@ -68,3 +68,4 @@ UseTab: ForContinuationAndIndentation
 # Own additions
 RequiresClausePosition: OwnLine
 IndentRequiresClause: true
+ForEachMacros: [TEST]

@@ -3,7 +3,7 @@
 project("suuri_sandbox")
 
 set(SOURCES
-	"main.cpp"
+	main.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
