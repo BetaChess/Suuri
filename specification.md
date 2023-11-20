@@ -97,7 +97,7 @@ suuri::big_float_t g = "b2_101010.101010"; // Binary
 suuri::big_float_t h = "b16_1a2b3c.1a2b3c"; // Hexadecimal
 suuri::big_float_t i = "b36_1a2zqc.1a2zqc"; // Base 36
 
-// Postfix
+// Postfix (recommended usage)
 auto j = "123"_BI; // Has type suuri::big_int_t
 auto k = "123"_BUI; // Has type suuri::big_uint_t
 auto l = "123.123"_BF; // Has type suuri::big_float_t
