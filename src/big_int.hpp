@@ -28,7 +28,14 @@ public:
 		requires std::is_fundamental_v<T> && std::integral<T>
 	constexpr BigInt(T num)
 		: digits_(), negative_(num < 0)
-	{}
+	{
+		while (num > base)
+		{
+			digits_.push_back(num % base);
+			num /= base;
+		}
+		digits_.push_back(num);
+	}
 	/**
 	 * Initialises the digits directly with a range of positive integers
 	 *
@@ -51,7 +58,7 @@ public:
 	 * @param str A string view containing the digits of the integer (see spec for how to specify a base other than 10).
 	 */
 	constexpr explicit BigInt(std::string_view str)
-		: digits_(), negative_(false)
+		: digits_({0}), negative_(false)
 	{}
 	
 	// Copy constructor and move constructor
@@ -71,6 +78,18 @@ public:
 	
 	constexpr bool operator==(const BigInt& rhs) const
 	{
+		if (digits_.size() != rhs.digits_.size())
+			return false;
+		if (isZero() && rhs.isZero())
+			return true;
+		if (negative_ != rhs.negative_)
+			return false;
+		
+		// Check if each individual digit is the same
+		for (size_t i = 0; i < digits_.size(); i++)
+			if (digits_[i] != rhs.digits_[i])
+				return false;
+		
 		return true;
 	}
 	

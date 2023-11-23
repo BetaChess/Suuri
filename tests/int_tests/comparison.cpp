@@ -12,10 +12,10 @@ TEST (IntComparison, Equality)
 		su::big_int_t a = {};
 		ASSERT_EQ(a, a);
 		
-		a = {1};
+		a = 1;
 		ASSERT_EQ(a, a);
 		
-		a = {-1};
+		a = -1;
 		ASSERT_EQ(a, a);
 	}
 	
@@ -26,13 +26,13 @@ TEST (IntComparison, Equality)
 		ASSERT_EQ(a, b);
 		ASSERT_EQ(b, a);
 		
-		a = {1};
-		b = {1};
+		a = 1;
+		b = 1;
 		ASSERT_EQ(a, b);
 		ASSERT_EQ(b, a);
 		
-		a = {-1};
-		b = {-1};
+		a = -1;
+		b = -1;
 		ASSERT_EQ(a, b);
 		ASSERT_EQ(b, a);
 	}
@@ -57,17 +57,17 @@ TEST (IntComparison, Equality)
 	// Test not equality (and also check reverse of lhs and rhs)
 	{
 		su::big_int_t a = {};
-		su::big_int_t b = {1};
+		su::big_int_t b = 1;
 		ASSERT_NE(a, b);
 		ASSERT_NE(b, a);
 		
-		a = {1};
-		b = {2};
+		a = 1;
+		b = 2;
 		ASSERT_NE(a, b);
 		ASSERT_NE(b, a);
 		
-		a = {-1};
-		b = {1};
+		a = -1;
+		b = 1;
 		ASSERT_NE(a, b);
 		ASSERT_NE(b, a);
 	}
