@@ -154,7 +154,18 @@ public:
 	}
 	constexpr std::strong_ordering operator<=>(const BigInt& rhs) const
 	{
-		return std::strong_ordering::less;
+		if (isZero() && rhs.isZero())
+			return std::strong_ordering::equal;
+		if (negative_ != rhs.negative_)
+		{
+			if (negative_)
+				return std::strong_ordering::less;
+			return std::strong_ordering::greater;
+		}
+		
+		if (negative_)
+			return digitsCompare(rhs.digits_, digits_);
+		return digitsCompare(digits_, rhs.digits_);
 	}
 	
 	/// Arithmetic Operators
