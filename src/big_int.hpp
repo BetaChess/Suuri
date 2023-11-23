@@ -29,6 +29,8 @@ public:
 	constexpr BigInt(T num)
 		: digits_(), negative_(num < 0)
 	{
+		num = negative_ ? -num : num;
+		
 		while (num > base)
 		{
 			digits_.push_back(num % base);
@@ -92,27 +94,64 @@ public:
 		
 		return true;
 	}
-	
 	constexpr bool operator<(const BigInt& rhs) const
 	{
-		return false;
+		if (isZero() && rhs.isZero())
+			return false;
+		if (negative_ != rhs.negative_)
+			return negative_;
+		
+		auto compareResult = digitsCompare(digits_, rhs.digits_);
+		
+		if (negative_)
+			return compareResult == std::strong_ordering::greater;
+		
+		return compareResult == std::strong_ordering::less;
 	}
-	
 	constexpr bool operator<=(const BigInt& rhs) const
 	{
-		return false;
+		if (isZero() && rhs.isZero())
+			return true;
+		if (negative_ != rhs.negative_)
+			return negative_;
+		
+		auto compareResult = digitsCompare(digits_, rhs.digits_);
+		if (compareResult == std::strong_ordering::equal)
+			return true;
+		if (negative_)
+			return compareResult == std::strong_ordering::greater;
+		
+		return compareResult == std::strong_ordering::less;
 	}
-	
 	constexpr bool operator>(const BigInt& rhs) const
 	{
-		return false;
+		if (isZero() && rhs.isZero())
+			return false;
+		if (negative_ != rhs.negative_)
+			return rhs.negative_;
+		
+		auto compareResult = digitsCompare(digits_, rhs.digits_);
+		
+		if (negative_)
+			return compareResult == std::strong_ordering::less;
+		
+		return compareResult == std::strong_ordering::greater;
 	}
-	
 	constexpr bool operator>=(const BigInt& rhs) const
 	{
-		return false;
+		if (isZero() && rhs.isZero())
+			return true;
+		if (negative_ != rhs.negative_)
+			return rhs.negative_;
+		
+		auto compareResult = digitsCompare(digits_, rhs.digits_);
+		if (compareResult == std::strong_ordering::equal)
+			return true;
+		if (negative_)
+			return compareResult == std::strong_ordering::less;
+		
+		return compareResult == std::strong_ordering::greater;
 	}
-	
 	constexpr std::strong_ordering operator<=>(const BigInt& rhs) const
 	{
 		return std::strong_ordering::less;
@@ -179,11 +218,29 @@ public:
 	}
 	
 	//// Misc methods
-	
+
+
+	/**
+	 * @brief Checks if the value is zero.
+	 *
+	 * @return True if the value is zero, false otherwise.
+	 */
 	[[nodiscard]] constexpr bool isZero() const noexcept
 	{
 		return digits_.size() == 1 && digits_[0] == static_cast<digit_t>(0);
 	}
+
+	/**
+	 * @brief Negates the BigInt object.
+	 *
+	 * @return True if the resulting object is now negative. False otherwise.
+	 * @note Always returns false if the object is the zero value.
+	 */
+	constexpr bool negate() noexcept
+	{
+		negative_ = !negative_;
+		return !isZero() && negative_;
+	};
 	
 	
 private:
