@@ -40,7 +40,7 @@ TEST (IntComparison, Equality)
 	// Test that big numbers are also equal (bigger than 2^128)
 	{
 		// Create vector for storing the digits (each digit should be base more than 2^30, so let's use 6 digits)
-		std::vector<su::digit_t> digits = {0xaaaaaaaa, 0xbbbbbbbb, 0xcccccccc, 0xdddddddd, 0xeeeeeeee, 0xffffffff};
+		std::vector<su::digit_t> digits = {0x3aaaaaaa, 0x3bbbbbbb, 0x3ccccccc, 0x3ddddddd, 0x3eeeeeee, 0x3fffffff};
 		
 		// Initialise the big int explicitly and do tests.
 		su::big_int_t a = su::big_int_t(digits);
@@ -98,7 +98,7 @@ TEST (IntComparison, LessAndGreater)
 		
 		// Also test big values
 		// Create vector for storing the digits
-		su::digit_storage_t digits = {0xaaaaaaaa, 0xbbbbbbbb, 0xcccccccc, 0xdddddddd, 0xeeeeeeee, 0xffffffff};
+		su::digit_storage_t digits = {0x3aaaaaaa, 0x3bbbbbbb, 0x3ccccccc, 0x3ddddddd, 0x3eeeeeee, 0x3fffffff};
 		a = su::big_int_t(std::move(digits));
 		EXPECT_FALSE(a < a);
 		EXPECT_LE(a, a);
@@ -131,7 +131,7 @@ TEST (IntComparison, LessAndGreater)
 		
 		// Also test big values
 		// Create vector for storing the digits
-		su::digit_storage_t digits = {0xaaaaaaaa, 0xbbbbbbbb, 0xcccccccc, 0xdddddddd, 0xeeeeeeee, 0xffffffff};
+		su::digit_storage_t digits = {0x3aaaaaaa, 0x3bbbbbbb, 0x3ccccccc, 0x3ddddddd, 0x3eeeeeee, 0x3fffffff};
 		a = su::big_int_t(digits);
 		b = su::big_int_t(digits);
 		EXPECT_FALSE(a < b);
@@ -204,8 +204,8 @@ TEST (IntComparison, LessAndGreater)
 		EXPECT_FALSE(a > b);
 
 		// Test big values
-		a = su::big_int_t(su::digit_storage_t{0xaaaaaaaa, 0xbbbbbbbb, 0xcccccccc, 0xdddddddd, 0xeeeeeeee, 0xeeeeeeee});
-		b = su::big_int_t(su::digit_storage_t{0xaaaaaaaa, 0xbbbbbbbb, 0xcccccccc, 0xdddddddd, 0xeeeeeeee, 0xffffffff});
+		a = su::big_int_t(su::digit_storage_t{0x3aaaaaaa, 0x3bbbbbbb, 0x3ccccccc, 0x3ddddddd, 0x3eeeeeee, 0x3eeeeeee});
+		b = su::big_int_t(su::digit_storage_t{0x3aaaaaaa, 0x3bbbbbbb, 0x3ccccccc, 0x3ddddddd, 0x3eeeeeee, 0x3fffffff});
 		EXPECT_LT(a, b);
 		EXPECT_LE(a, b);
 		EXPECT_FALSE(b < a);
@@ -213,8 +213,8 @@ TEST (IntComparison, LessAndGreater)
 		EXPECT_GE(b, a);
 		EXPECT_FALSE(a > b);
 		
-		a = su::big_int_t(su::digit_storage_t{0xaaaaaaaa, 0xbbbbbbbb, 0xcccccccc, 0xdddddddd, 0xeeeeeeee, 0xffffffff}, true);
-		b = su::big_int_t(su::digit_storage_t{0xaaaaaaaa, 0xbbbbbbbb, 0xcccccccc, 0xdddddddd, 0xeeeeeeee, 0xeeeeeeee}, true);
+		a = su::big_int_t(su::digit_storage_t{0x3aaaaaaa, 0x3bbbbbbb, 0x3ccccccc, 0x3ddddddd, 0x3eeeeeee, 0x3fffffff}, true);
+		b = su::big_int_t(su::digit_storage_t{0x3aaaaaaa, 0x3bbbbbbb, 0x3ccccccc, 0x3ddddddd, 0x3eeeeeee, 0x3eeeeeee}, true);
 		EXPECT_LT(a, b);
 		EXPECT_LE(a, b);
 		EXPECT_FALSE(b < a);
@@ -222,8 +222,8 @@ TEST (IntComparison, LessAndGreater)
 		EXPECT_GE(b, a);
 		EXPECT_FALSE(a > b);
 		
-		a = su::big_int_t(su::digit_storage_t{0xaaaaaaaa, 0xbbbbbbbb, 0xcccccccc, 0xcccccccc, 0xeeeeeeee, 0xffffffff});
-		b = su::big_int_t(su::digit_storage_t{0xaaaaaaaa, 0xbbbbbbbb, 0xcccccccc, 0xdddddddd, 0xeeeeeeee, 0xffffffff});
+		a = su::big_int_t(su::digit_storage_t{0x3aaaaaaa, 0x3bbbbbbb, 0x3ccccccc, 0x3ccccccc, 0x3eeeeeee, 0x3fffffff});
+		b = su::big_int_t(su::digit_storage_t{0x3aaaaaaa, 0x3bbbbbbb, 0x3ccccccc, 0x3ddddddd, 0x3eeeeeee, 0x3fffffff});
 		EXPECT_LT(a, b);
 		EXPECT_LE(a, b);
 		EXPECT_FALSE(b < a);
@@ -231,8 +231,8 @@ TEST (IntComparison, LessAndGreater)
 		EXPECT_GE(b, a);
 		EXPECT_FALSE(a > b);
 		
-		a = su::big_int_t(su::digit_storage_t{0xaaaaaaaa, 0xbbbbbbbb, 0xcccccccc, 0xdddddddd, 0xeeeeeeee, 0xffffffff}, true);
-		b = su::big_int_t(su::digit_storage_t{0xaaaaaaaa, 0xbbbbbbbb, 0xcccccccc, 0xcccccccc, 0xeeeeeeee, 0xffffffff}, true);
+		a = su::big_int_t(su::digit_storage_t{0x3aaaaaaa, 0x3bbbbbbb, 0x3ccccccc, 0x3ddddddd, 0x3eeeeeee, 0x3fffffff}, true);
+		b = su::big_int_t(su::digit_storage_t{0x3aaaaaaa, 0x3bbbbbbb, 0x3ccccccc, 0x3ccccccc, 0x3eeeeeee, 0x3fffffff}, true);
 		EXPECT_LT(a, b);
 		EXPECT_LE(a, b);
 		EXPECT_FALSE(b < a);
