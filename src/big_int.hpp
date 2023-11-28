@@ -3,6 +3,7 @@
 #include "suuri_core.hpp"
 
 #include <concepts>
+#include <string>
 #include <string_view>
 
 
@@ -31,7 +32,7 @@ public:
 	{
 		num = negative_ ? -num : num;
 		
-		while (num > base)
+		while (num >= base)
 		{
 			digits_.push_back(num % base);
 			num /= base;
@@ -174,10 +175,28 @@ public:
 	
 	constexpr BigInt operator+(const BigInt& rhs) const
 	{
-		return BigInt();
+		return (BigInt(*this) += rhs);
 	}
 	constexpr BigInt& operator+=(const BigInt& rhs)
 	{
+		if (rhs.isZero())
+			return *this;
+		
+		if (negative_ == rhs.negative_)
+		{
+			addDigits(rhs);
+		}
+		else if (digitsCompare(digits_, rhs.digits_) == std::strong_ordering::greater)
+		{
+			subtractDigits(rhs);
+		}
+		else
+		{
+			subtractLhsFromRhsDigits(rhs);
+			negate();
+		}
+		
+		removeLeadingZeros();
 		return *this;
 	}
 	
@@ -230,7 +249,6 @@ public:
 	
 	//// Misc methods
 
-
 	/**
 	 * @brief Checks if the value is zero.
 	 *
@@ -241,6 +259,8 @@ public:
 		return digits_.size() == 1 && digits_[0] == static_cast<digit_t>(0);
 	}
 
+	//// State mutator methods
+	
 	/**
 	 * @brief Negates the BigInt object.
 	 *
@@ -253,13 +273,142 @@ public:
 		return !isZero() && negative_;
 	};
 	
+	//// State accessor methods
+	// None so far
+	
+	//// Conversion methods
+	
+	[[nodiscard]] constexpr std::string to_string() const
+	{
+		return "";
+	}
 	
 private:
 	digit_storage_t digits_;
 	bool negative_;
+	
+	//// Private methods
+	
+	/// Helper methods
+
+	constexpr bool removeLeadingZeros()
+	{
+
+		if (digits_.size() == 1)
+			return false;
+
+		auto it = digits_.rbegin();
+		while (it != digits_.rend() && *it == 0)
+			++it;
+
+		if (it == digits_.rend())
+		{
+			digits_.resize(1);
+			digits_[0] = 0;
+			return true;
+		}
+
+		auto toKeep = std::distance(it, digits_.rend());
+		// TODO: Maybe switch this to resize(max(toKeep, 1)) and remove the previous if statement?
+		digits_.resize(toKeep);
+
+		return true;
+	}
+	
+	/// Addition methods
+	
+	constexpr BigInt& addDigits(const BigInt& rhs)
+	{
+		// We're going to need at least as much storage for the digits as rhs.
+		// TODO: Add optimisation that checks if we need rhs.size() + 1
+		if (rhs.digits_.size() > digits_.size())
+		{
+			digits_.resize(rhs.digits_.size());
+		}
+
+		// Add the digits
+		digit_t carry = 0;
+		for (size_t i = 0; i < rhs.digits_.size(); i++)
+		{
+			digit_t sum = digits_[i] + rhs.digits_[i] + carry;
+
+			bool overflow = sum >= suuri::base;
+			digits_[i] = static_cast<uint32_t>(sum - suuri::base * overflow);
+			carry = overflow;
+
+			// TODO: Benchmark
+			//digits_[i] = sum % suuri::base;
+			//carry = sum / suuri::base;
+		}
+		
+		if (carry)
+		{
+			// This has to be done before in case rhs is lhs
+			auto n = rhs.digits_.size();
+		
+			digits_.resize(digits_.size() + 1);
+		
+			while (digits_[n] == suuri::base - 1)
+			{
+				digits_[n] = 0;
+				n++;
+			}
+			
+			digits_[n]++;
+		}
+		
+		return *this;
+	}
+
+	constexpr BigInt& subtractDigits(const BigInt& rhs)
+	{
+		//assert(!digitsGreaterThanFullPrecision(rhs, digits_) && "Subtraction result would be negative, and does thus not works with this function.");
+		
+		int64_t carry = 0;
+		for (size_t i = 0; i < rhs.digits_.size(); i++)
+		{
+			int64_t diff = static_cast<int64_t>(digits_[i]) - static_cast<int64_t>(rhs.digits_[i]) - carry;
+
+			bool underflow = diff < 0;
+			digits_[i] = static_cast<uint32_t>(diff + suuri::base * underflow);
+			carry = underflow;
+		}
+
+		digits_[digits_.size() - 1] -= static_cast<uint32_t>(carry);
+		
+		return *this;
+	}
+	
+	constexpr BigInt& subtractLhsFromRhsDigits(const BigInt& rhs)
+	{
+		//assert(!digitsLessThanFullPrecision(rhs, digits_) && "Subtraction result would be negative, and does thus not works with this function.");
+		
+		if (rhs.digits_.size() > digits_.size())
+		{
+			digits_.resize(rhs.digits_.size());
+		}
+
+		int64_t carry = 0;
+		for (size_t i = 0; i < rhs.digits_.size(); i++)
+		{
+			int64_t diff = static_cast<int64_t>(rhs.digits_[i]) - static_cast<int64_t>(digits_[i]) - carry;
+
+			bool underflow = diff < 0;
+			digits_[i] = static_cast<uint32_t>(diff + suuri::base * underflow);
+			carry = underflow;
+		}
+
+		digits_[digits_.size() - 1] -= static_cast<uint32_t>(carry);
+		
+		return *this;
+	}
+	
+	/// Multiplication methods
+	
+	
 
 	// Provide a friend overload for the testing framework.
-	friend void PrintTo(const BigInt& bigint, std::ostream* os) {
+	friend constexpr void PrintTo(const BigInt& bigint, std::ostream* os) {
 		*os << (bigint.negative_ ? "-[" : "[");
 		
 		// Print the digits in order

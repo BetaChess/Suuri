@@ -10,9 +10,9 @@ namespace suuri
 typedef uint32_t digit_t;
 typedef std::vector<digit_t> digit_storage_t;
 
-constexpr digit_t base = 2147483648;
+inline constexpr digit_t base = 2147483648;
 
-constexpr std::strong_ordering digitsCompare(const digit_storage_t& lhs, const digit_storage_t& rhs) noexcept
+inline constexpr std::strong_ordering digitsCompare(const digit_storage_t& lhs, const digit_storage_t& rhs) noexcept
 {
 	if (lhs.size() != rhs.size())
 		return lhs.size() < rhs.size() ? std::strong_ordering::less : std::strong_ordering::greater;
