@@ -40,21 +40,18 @@ public:
 		digits_.push_back(num);
 	}
 	/**
-	 * Initialises the digits directly with a range of positive integers
-	 *
-	 * @param negative Flag indicating if the integer is negative. Defaults to false.
-	 */
-	template<std::ranges::range R>
-		requires std::integral<std::ranges::range_value_t<R>>
-	constexpr explicit BigInt(const R& digits, bool negative = false)
-		: digits_(std::ranges::begin(digits), std::ranges::end(digits)), negative_(negative)
-	{}
-	/**
 	 * @param digits An	 rvalue reference to a digit_storage_t container holding the digits of the integer.
 	 * @param negative Flag indicating if the integer is negative. Defaults to false.
 	 */
 	constexpr explicit BigInt(digit_storage_t &&digits, bool negative = false)
 		: digits_(std::move(digits)), negative_(negative)
+	{}
+	/**
+	 * @param digits A reference to a digit_storage_t container holding the digits of the integer.
+	 * @param negative Flag indicating if the integer is negative. Defaults to false.
+	 */
+	constexpr explicit BigInt(const digit_storage_t &digits, bool negative = false)
+		: digits_(digits.begin(), digits.end()), negative_(negative)
 	{}
 	/**
 	 * Initialise using a string view

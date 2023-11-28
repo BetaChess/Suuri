@@ -216,7 +216,7 @@ TEST(IntAddition, IntegersNegativeNegative)
 		b = -1;
 		c = a + b;
 		
-		EXPECT_EQ(c, 3);
+		EXPECT_EQ(c, -3);
 		
 		a = -536870911;
 		b = -536870911;
@@ -263,7 +263,7 @@ TEST(IntAddition, IntegersNegativeNegative)
 		b = 2;
 		c = a + b;
 		
-		EXPECT_EQ(c, -2147483649LL);
+		EXPECT_EQ(c, -2147483645LL);
 		
 		a = -2147483647;
 		b = -2147483647;
