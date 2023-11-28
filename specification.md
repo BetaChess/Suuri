@@ -79,23 +79,23 @@ std::cout << e /* or f or g */ << std::endl; // Will NOT necessarily print 0.152
 Suuri offers initialisation with a string (specifically a ``std::string_view``). 
 This string can be in any base from 2 to 36 (*base 36 using 0-9 in addition to the letters a-z*). 
 The base is specified by the prefix of the string. The prefix is specified by the letter ``b`` followed by the base number, 
-followed by ``_`` and then the number itself. If no prefix is specified, the base is assumed to be 10. <br/>
+followed by ``_`` and then the number itself. This is also where the negative sign goes, if present. If no prefix is specified, the base is assumed to be 10. <br/>
 In addition to this, Suuri also adds the option to make literals of the basic types using ``""_BI``, ``""_BUI`` and ``""_BF``.
 #### Examples
 
 ```cpp
-suuri::big_int_t a = "123";
-suuri::big_int_t b = "b2_101010"; // Binary
-suuri::big_int_t c = "b16_1a2b3c"; // Hexadecimal
-suuri::big_int_t d = "b36_1a2zqc"; // Base 36
+suuri::big_int_t a = suuri::big_int_t("123"); // Base 10 (Decimal)
+suuri::big_int_t b = suuri::big_int_t("b2_101010"); // Binary
+suuri::big_int_t c = suuri::big_int_t("b16_1a2b3c"); // Hexadecimal
+suuri::big_int_t d = suuri::big_int_t("b36_-1a2zqc"); // Base 36 (negative)
 // Of course, the real power comes from being able to assign numbers greater than the limits of builtin primitives.
-suuri::big_int_t e = "12345678901234567890123456789012345678901234567890123456789012345678901234567890";
+suuri::big_int_t e = suuri::big_int_t("12345678901234567890123456789012345678901234567890123456789012345678901234567890");
 
 // And these all work for floating point as well
-suuri::big_float_t f = "123.456";
-suuri::big_float_t g = "b2_101010.101010"; // Binary
-suuri::big_float_t h = "b16_1a2b3c.1a2b3c"; // Hexadecimal
-suuri::big_float_t i = "b36_1a2zqc.1a2zqc"; // Base 36
+suuri::big_float_t f = suuri::big_int_t("123.456");
+suuri::big_float_t g = suuri::big_int_t("b2_101010.101010"); // Binary
+suuri::big_float_t h = suuri::big_int_t("b16_1a2b3c.1a2b3c"); // Hexadecimal
+suuri::big_float_t i = suuri::big_int_t("b36_1a2zqc.1a2zqc"); // Base 36
 
 // Postfix (recommended usage)
 auto j = "123"_BI; // Has type suuri::big_int_t
