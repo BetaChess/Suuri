@@ -54,7 +54,7 @@ TEST(IntAddition, IntegersPositivePositive)
 		b = 536870911;
 		c = a + b;
 		
-		EXPECT_EQ(c, 777777);
+		EXPECT_EQ(c, 1073741822);
 		
 		a = 11111;
 		b = 1111111112;
@@ -74,7 +74,7 @@ TEST(IntAddition, IntegersPositivePositive)
 		b = 536870911;
 		c = b + a;
 		
-		EXPECT_EQ(c, 777777);
+		EXPECT_EQ(c, 1073741822);
 		
 		a = 11111;
 		b = 1111111112;
