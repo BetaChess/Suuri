@@ -224,12 +224,6 @@ TEST(IntAddition, IntegersNegativeNegative)
 		
 		EXPECT_EQ(c, -1073741822);
 		
-		a = -536870911;
-		b = -536870911;
-		c = a + b;
-		
-		EXPECT_EQ(c, -777777);
-		
 		a = -11111;
 		b = -1111111112;
 		c = a + b;
@@ -243,12 +237,6 @@ TEST(IntAddition, IntegersNegativeNegative)
 		c = b + a;
 		
 		EXPECT_EQ(c, -1073741822);
-		
-		a = -536870911;
-		b = -536870911;
-		c = b + a;
-		
-		EXPECT_EQ(c, -777777);
 		
 		a = -11111;
 		b = -1111111112;
