@@ -237,10 +237,11 @@ public:
 	
 	constexpr BigInt operator*(const BigInt& rhs) const
 	{
-		return BigInt();
+		return longMultiplication(rhs);
 	}
 	constexpr BigInt& operator*=(const BigInt& rhs)
 	{
+		*this = longMultiplication(rhs);
 		return *this;
 	}
 	
@@ -288,6 +289,30 @@ public:
 		negative_ = !negative_;
 		return !isZero() && negative_;
 	};
+	
+	//// Multiplication methods
+	
+	[[nodiscard]] constexpr BigInt longMultiplication(const BigInt& rhs) const
+	{
+		BigInt ret;
+		ret.digits_.resize(digits_.size() + rhs.digits_.size());
+		
+		for (size_t i = 0; i < digits_.size(); i++)
+		{
+			for (size_t j = 0; j < rhs.digits_.size(); j++)
+			{
+				uint64_t res = static_cast<uint64_t>(ret.digits_[i + j]) + static_cast<uint64_t>(digits_[i]) * static_cast<uint64_t>(rhs.digits_[j]);
+				ret.digits_[i + j + 1] += res / base;
+				ret.digits_[i + j] = static_cast<uint32_t>(res % base);
+			}
+		}
+
+		ret.negative_ = negative_ ^ rhs.negative_;
+		if (ret.digits_.back() == 0)
+			ret.digits_.pop_back();
+
+		return ret;
+	}
 	
 	//// State accessor methods
 	// None so far
