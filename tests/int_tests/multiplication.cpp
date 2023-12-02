@@ -67,7 +67,7 @@ TEST(IntMultiplication, IntegersPositivePositive)
 		b = 129;
 		c = a * b;
 		
-		EXPECT_EQ(c, 55737);
+		EXPECT_EQ(c, 55857);
 	}
 	
 	// Test multiplication of large integers
@@ -76,13 +76,13 @@ TEST(IntMultiplication, IntegersPositivePositive)
 		su::big_int_t b = 536870911;
 		su::big_int_t c = a * b;
 		
-		EXPECT_EQ(c, 288230376151711744LL);
+		EXPECT_EQ(c, 288230375077969921LL);
 
 		a = 11111;
 		b = 1111111112;
 		c = a * b;
 
-		EXPECT_EQ(c, 12345678954332LL);
+		EXPECT_EQ(c, 12345555565432LL);
 	}
 	
 	// Test of large integers (using string initializer)
@@ -170,7 +170,7 @@ TEST(IntMultiplication, IntegersNegativeNegative)
 		b = -129;
 		c = a * b;
 		
-		EXPECT_EQ(c, 55737);
+		EXPECT_EQ(c, 55857);
 	}
 	
 	// Test multiplication of large integers
@@ -179,13 +179,13 @@ TEST(IntMultiplication, IntegersNegativeNegative)
 		su::big_int_t b = -536870911;
 		su::big_int_t c = a * b;
 		
-		EXPECT_EQ(c, 288230376151711744LL);
+		EXPECT_EQ(c, 288230375077969921LL);
 
 		a = -11111;
 		b = -1111111112;
 		c = a * b;
 
-		EXPECT_EQ(c, 12345678954332LL);
+		EXPECT_EQ(c, 12345555565432LL);
 	}
 	
 	// Test of large integers (using string initializer)
@@ -273,7 +273,7 @@ TEST(IntMultiplication, IntegersPositiveNegative)
 		b = -129;
 		c = a * b;
 		
-		EXPECT_EQ(c, -55737);
+		EXPECT_EQ(c, -55857);
 	}
 	
 	// Test multiplication of large integers
@@ -282,13 +282,13 @@ TEST(IntMultiplication, IntegersPositiveNegative)
 		su::big_int_t b = -536870911;
 		su::big_int_t c = a * b;
 		
-		EXPECT_EQ(c, -288230376151711744LL);
+		EXPECT_EQ(c, -288230375077969921LL);
 
 		a = 11111;
 		b = -1111111112;
 		c = a * b;
 
-		EXPECT_EQ(c, -12345678954332LL);
+		EXPECT_EQ(c, -12345555565432LL);
 	}
 	
 	// Test of large integers (using string initializer)
