@@ -91,7 +91,7 @@ TEST(IntMultiplication, IntegersPositivePositive)
 		su::big_int_t b = su::big_int_t("987654321987654321987654321987654321");
 		su::big_int_t c = a * b;
 		
-		EXPECT_EQ(c, su::big_int_t("121932631137021795022830020648107258967142485388108865987654321"));
+		EXPECT_EQ(c, su::big_int_t("121932631356500531591068431825636331816338969581771069347203169112635269"));
 		
 		a = su::big_int_t("576460752303423488");
 		b = su::big_int_t("576460752303423488");
@@ -103,7 +103,7 @@ TEST(IntMultiplication, IntegersPositivePositive)
 		b = su::big_int_t("132922799578491587");
 		c = a * b;
 		
-		EXPECT_EQ(c, su::big_int_t("17636673601169565458377541078489"));
+		EXPECT_EQ(c, su::big_int_t("17668470647783843218636542229778569"));
 	}
 }
 
@@ -194,7 +194,7 @@ TEST(IntMultiplication, IntegersNegativeNegative)
 		su::big_int_t b = su::big_int_t("-987654321987654321987654321987654321");
 		su::big_int_t c = a * b;
 		
-		EXPECT_EQ(c, su::big_int_t("121932631137021795022830020648107258967142485388108865987654321"));
+		EXPECT_EQ(c, su::big_int_t("121932631356500531591068431825636331816338969581771069347203169112635269"));
 		
 		a = su::big_int_t("-576460752303423488");
 		b = su::big_int_t("-576460752303423488");
@@ -206,7 +206,7 @@ TEST(IntMultiplication, IntegersNegativeNegative)
 		b = su::big_int_t("-132922799578491587");
 		c = a * b;
 		
-		EXPECT_EQ(c, su::big_int_t("17636673601169565458377541078489"));
+		EXPECT_EQ(c, su::big_int_t("17668470647783843218636542229778569"));
 	}
 }
 
@@ -297,7 +297,7 @@ TEST(IntMultiplication, IntegersPositiveNegative)
 		su::big_int_t b = su::big_int_t("-987654321987654321987654321987654321");
 		su::big_int_t c = a * b;
 		
-		EXPECT_EQ(c, su::big_int_t("-121932631137021795022830020648107258967142485388108865987654321"));
+		EXPECT_EQ(c, su::big_int_t("-121932631356500531591068431825636331816338969581771069347203169112635269"));
 		
 		a = su::big_int_t("576460752303423488");
 		b = su::big_int_t("-576460752303423488");
@@ -309,6 +309,6 @@ TEST(IntMultiplication, IntegersPositiveNegative)
 		b = su::big_int_t("-132922799578491587");
 		c = a * b;
 		
-		EXPECT_EQ(c, su::big_int_t("-17636673601169565458377541078489"));
+		EXPECT_EQ(c, su::big_int_t("-17668470647783843218636542229778569"));
 	}
 }

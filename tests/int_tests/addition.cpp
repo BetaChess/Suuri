@@ -489,6 +489,6 @@ TEST(IntAddition, IntegersPositiveNegative)
 		b = su::big_int_t("-1329227995784915872903690623925709942");
 		c = a + b;
 
-		EXPECT_EQ(c, su::big_int_t("148429635350912"));
+		EXPECT_EQ(c, su::big_int_t("116436353102480"));
 	}
 }

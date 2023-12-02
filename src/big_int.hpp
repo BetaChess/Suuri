@@ -57,9 +57,53 @@ public:
 	 * Initialise using a string view
 	 * @param str A string view containing the digits of the integer (see spec for how to specify a base other than 10).
 	 */
-	constexpr explicit BigInt(std::string_view str)
+	constexpr explicit BigInt(const std::string& str)
 		: digits_({0}), negative_(false)
-	{}
+	{
+		uint32_t b;
+		
+		size_t i = 0;
+		if (str[i] == 'b')
+		{
+			i++;
+			if (str[i] < '0' || str[i] > '9')
+				throw std::invalid_argument("Invalid base argument!");
+			if (str[i + 1] == '_')
+			{
+				b = std::stoi(str.substr(i, i + 1));
+				i++;
+			}
+			else
+			{
+				b = std::stoi(str.substr(i, i + 2));
+				i += 2;
+			}
+			if (str[i] != '_' || b > 36)
+				throw std::invalid_argument("Invalid base argument!");
+			i++;
+		}
+		else
+			b = 10;
+		
+		bool negative;
+		if (str[i] == '-')
+		{
+			negative = true;
+			i++;
+		}
+		else
+			negative = false;
+		
+		*this += BigInt(convertCharToInt(str[i], b));
+		i++;
+		for (; i < str.size(); i++)
+		{
+			*this *= BigInt(b);
+			*this += BigInt(convertCharToInt(str[i], b));
+		}
+		
+		negative_ = negative;
+	}
 	
 	// Copy constructor and move constructor
 	
