@@ -201,10 +201,29 @@ public:
 	
 	constexpr BigInt operator-(const BigInt& rhs) const
 	{
-		return BigInt();
+		return BigInt(*this) -= rhs;
 	}
 	constexpr BigInt& operator-=(const BigInt& rhs)
 	{
+		if (rhs.isZero())
+			return *this;
+		
+		if (negative_ != rhs.negative_)
+		{
+			addDigits(rhs);
+		}
+		else if (digitsCompare(digits_, rhs.digits_) == std::strong_ordering::greater)
+		{
+			subtractDigits(rhs);
+		}
+		else
+		{
+			subtractLhsFromRhsDigits(rhs);
+			negate();
+		}
+		
+		removeLeadingZeros();
+		
 		return *this;
 	}
 	constexpr BigInt operator-()

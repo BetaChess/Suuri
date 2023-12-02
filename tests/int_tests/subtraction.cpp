@@ -270,7 +270,7 @@ TEST(IntSubtraction, IntegersNegativeNegative)
 		b = -11111;
 		c = a - b;
 
-		EXPECT_EQ(c, -1111122222);
+		EXPECT_EQ(c, -1111100000);
 
 		a = -1111111111;
 		b = -1111111111;
