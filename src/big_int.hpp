@@ -1,6 +1,7 @@
 #pragma once
 
 #include "suuri_core.hpp"
+#include "exception.hpp"
 
 #include <concepts>
 #include <string>
@@ -487,13 +488,9 @@ private:
 		
 		return *this;
 	}
-	
-	/// Multiplication methods
-	
-	
 
 	// Provide a friend overload for the testing framework.
-	friend constexpr void PrintTo(const BigInt& bigint, std::ostream* os) {
+	friend inline void PrintTo(const BigInt& bigint, std::ostream* os) {
 		*os << (bigint.negative_ ? "-[" : "[");
 		
 		// Print the digits in order

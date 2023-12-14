@@ -8,6 +8,8 @@ set(SOURCES
 	int_tests/addition.cpp
 	int_tests/subtraction.cpp
 	int_tests/multiplication.cpp
+	int_tests/division.cpp
+	../src/exception.hpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
