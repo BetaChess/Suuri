@@ -304,10 +304,12 @@ public:
 	}
 	constexpr BigInt operator%(const BigInt& rhs) const
 	{
-		return BigInt();
+		return *this - rhs * (*this / rhs);
 	}
 	constexpr BigInt& operator%=(const BigInt& rhs)
 	{
+		*this = *this - rhs * (*this / rhs);
+		
 		return *this;
 	}
 	
@@ -500,8 +502,6 @@ private:
 
 	constexpr BigInt& subtractDigits(const BigInt& rhs)
 	{
-		//assert(!digitsGreaterThanFullPrecision(rhs, digits_) && "Subtraction result would be negative, and does thus not works with this function.");
-		
 		int64_t carry = 0;
 		for (size_t i = 0; i < rhs.digits_.size(); i++)
 		{
