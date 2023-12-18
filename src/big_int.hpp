@@ -3,6 +3,7 @@
 #include "suuri_core.hpp"
 #include "exception.hpp"
 
+#include <algorithm>
 #include <concepts>
 #include <string>
 #include <string_view>
@@ -282,11 +283,11 @@ public:
 	
 	constexpr BigInt operator*(const BigInt& rhs) const
 	{
-		return longMultiplication(rhs);
+		return long_multiplication(rhs);
 	}
 	constexpr BigInt& operator*=(const BigInt& rhs)
 	{
-		*this = longMultiplication(rhs);
+		*this = long_multiplication(rhs);
 		return *this;
 	}
 	
@@ -294,10 +295,11 @@ public:
 	
 	constexpr BigInt operator/(const BigInt& rhs) const
 	{
-		return BigInt();
+		return divide_binary_search(rhs);
 	}
 	constexpr BigInt& operator/=(const BigInt& rhs)
 	{
+		*this = divide_binary_search(rhs);
 		return *this;
 	}
 	constexpr BigInt operator%(const BigInt& rhs) const
@@ -337,7 +339,7 @@ public:
 	
 	//// Multiplication methods
 	
-	[[nodiscard]] constexpr BigInt longMultiplication(const BigInt& rhs) const
+	[[nodiscard]] constexpr BigInt long_multiplication(const BigInt& rhs) const
 	{
 		BigInt ret;
 		ret.digits_.resize(digits_.size() + rhs.digits_.size());
@@ -357,6 +359,56 @@ public:
 			ret.digits_.pop_back();
 
 		return ret;
+	}
+	
+	//// Division methods
+	
+	[[nodiscard]] constexpr std::pair<BigInt, BigInt> divided_by_two() const
+	{
+		uint64_t remainder = 0;
+		digit_storage_t digits;
+
+		for (size_t i = digits_.size() - 1; i < static_cast<size_t>(-1); i--)
+		{
+			digit_t next = digits_[i] / 2 + remainder * base / 2;
+			remainder = digits_[i] % 2 + remainder * base % 2;
+			digits.push_back(next);
+		}
+
+		std::ranges::reverse(digits);
+		
+		return {BigInt{std::move(digits)}, BigInt{remainder}};
+	}
+	
+	[[nodiscard]] constexpr BigInt divide_binary_search(const BigInt& rhs) const
+	{
+		if (rhs.isZero())
+			throw divide_by_zero();
+		
+		BigInt low{0};
+		BigInt mid;
+		BigInt high{*this};
+		high.negative_ = false;
+		
+		BigInt quotient{0};
+		while (low <= high)
+		{
+			mid = low + (high - low).divided_by_two().first;
+			
+			if (digitsCompare((mid * rhs).digits_, digits_) == std::strong_ordering::greater)
+			{
+				high = mid - 1;
+			}
+			else
+			{
+				quotient = mid;
+				low = mid + 1;
+			}
+		}
+		
+		quotient.negative_ = negative_ != rhs.negative_;
+		
+		return quotient;
 	}
 	
 	//// State accessor methods
