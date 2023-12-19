@@ -6,7 +6,6 @@
 #include <algorithm>
 #include <concepts>
 #include <string>
-#include <sstream>
 
 
 namespace suuri
@@ -428,7 +427,8 @@ public:
 		
 		while (num >= 10)
 		{
-			digits.push_back(static_cast<char>((num % 10).digits_[0]));
+			auto nextDigit = static_cast<char>((num % 10).digits_[0]);
+			digits.push_back(nextDigit);
 			num /= 10;
 		}
 		digits.push_back(static_cast<char>(num.digits_[0]));
@@ -524,7 +524,8 @@ private:
 	constexpr BigInt& subtractDigits(const BigInt& rhs)
 	{
 		int64_t carry = 0;
-		for (size_t i = 0; i < rhs.digits_.size(); i++)
+		size_t i = 0;
+		for (; i < rhs.digits_.size(); i++)
 		{
 			int64_t diff = static_cast<int64_t>(digits_[i]) - static_cast<int64_t>(rhs.digits_[i]) - carry;
 
@@ -532,8 +533,20 @@ private:
 			digits_[i] = static_cast<uint32_t>(diff + suuri::base * underflow);
 			carry = underflow;
 		}
+		
+		while (carry)
+		{
+			int64_t diff = static_cast<int64_t>(digits_[i]) - carry;
 
-		digits_[digits_.size() - 1] -= static_cast<uint32_t>(carry);
+			bool underflow = diff < 0;
+			digits_[i] = static_cast<uint32_t>(diff + suuri::base * underflow);
+			carry = underflow;
+			
+			i++;
+		}
+		
+		if (digits_[digits_.size() - 1] == 0)
+			digits_.pop_back();
 		
 		return *this;
 	}
@@ -548,7 +561,8 @@ private:
 		}
 
 		int64_t carry = 0;
-		for (size_t i = 0; i < rhs.digits_.size(); i++)
+		size_t i = 0;
+		for (; i < rhs.digits_.size(); i++)
 		{
 			int64_t diff = static_cast<int64_t>(rhs.digits_[i]) - static_cast<int64_t>(digits_[i]) - carry;
 
@@ -557,7 +571,19 @@ private:
 			carry = underflow;
 		}
 
-		digits_[digits_.size() - 1] -= static_cast<uint32_t>(carry);
+		while (carry)
+		{
+			int64_t diff = static_cast<int64_t>(rhs.digits_[i]) - carry;
+
+			bool underflow = diff < 0;
+			digits_[i] = static_cast<uint32_t>(diff + suuri::base * underflow);
+			carry = underflow;
+
+			i++;
+		}
+		
+		if (digits_[digits_.size() - 1] == 0)
+			digits_.pop_back();
 		
 		return *this;
 	}

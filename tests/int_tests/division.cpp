@@ -110,6 +110,15 @@ TEST (IntDivision, IntergerPositivePositve)
 		
 		EXPECT_EQ(c, su::big_int_t("1000000000100"));
 		EXPECT_EQ(d, su::big_int_t("99"));
+		
+		
+		a = su::big_int_t("427488328406002556429801375338939964969034378836681372467200000000");
+		b = su::big_int_t("10");
+		c = a / b;
+		d = a % b;
+		
+		EXPECT_EQ(c, su::big_int_t("42748832840600255642980137533893996496903437883668137246720000000"));
+		EXPECT_EQ(d, 0);
 	}
 }
 
