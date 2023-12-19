@@ -27,7 +27,7 @@ int main()
 //	
 //	std::cout << (suuri::big_int_t{"427488328406002556429801375338939964969034378836681372467200000000"}/10).to_string();
 //	
-	auto s = fact(585).to_string();
+	auto s = fact(20000).to_string();
 	
 	std::cout << s;
 

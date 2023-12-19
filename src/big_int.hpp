@@ -310,11 +310,17 @@ public:
 	}
 	constexpr BigInt operator%(const BigInt& rhs) const
 	{
+		if (rhs.is_zero())
+			throw divide_by_zero();
+		
+		if (rhs.digits_.size() == 1)
+			return divide_small(static_cast<int64_t>(rhs.digits_[0]) * (rhs.negative_ * -1 + !rhs.negative_)).second;
+		
 		return *this - rhs * (*this / rhs);
 	}
 	constexpr BigInt& operator%=(const BigInt& rhs)
 	{
-		*this = *this - rhs * (*this / rhs);
+		*this = *this % rhs;
 		
 		return *this;
 	}
@@ -431,7 +437,7 @@ public:
 	
 	[[nodiscard]] constexpr std::string to_string() const
 	{
-		// TODO: This is really slow. Make it faster.
+		// TODO: This is slow ish, but definitely usable for most things. Make it faster.
 		std::vector<char> digits;
 		
 		BigInt num = *this;
@@ -439,9 +445,10 @@ public:
 		
 		while (num >= 10)
 		{
-			auto nextDigit = static_cast<char>((num % 10).digits_[0]);
+			auto division_result = num.divide_small(10);
+			num = division_result.first;
+			auto nextDigit = static_cast<char>(division_result.second.digits_[0]);
 			digits.push_back(nextDigit);
-			num /= 10;
 		}
 		digits.push_back(static_cast<char>(num.digits_[0]));
 		
