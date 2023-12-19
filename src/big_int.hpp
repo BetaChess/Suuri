@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <concepts>
 #include <string>
+#include <ostream>
 
 
 namespace suuri
