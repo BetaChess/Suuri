@@ -113,7 +113,7 @@ TEST (IntDivision, IntergerPositivePositve)
 		
 		
 		a = su::big_int_t("427488328406002556429801375338939964969034378836681372467200000000");
-		b = su::big_int_t("10");
+		b = 10;
 		c = a / b;
 		d = a % b;
 		

@@ -95,12 +95,12 @@ public:
 		else
 			negative = false;
 		
-		*this += BigInt(convertCharToInt(str[i], b));
+		*this += BigInt(convert_char_to_int(str[i], b));
 		i++;
 		for (; i < str.size(); i++)
 		{
 			*this *= BigInt(b);
-			*this += BigInt(convertCharToInt(str[i], b));
+			*this += BigInt(convert_char_to_int(str[i], b));
 		}
 		
 		negative_ = negative;
@@ -125,7 +125,7 @@ public:
 	{
 		if (digits_.size() != rhs.digits_.size())
 			return false;
-		if (isZero() && rhs.isZero())
+		if (is_zero() && rhs.is_zero())
 			return true;
 		if (negative_ != rhs.negative_)
 			return false;
@@ -139,12 +139,12 @@ public:
 	}
 	constexpr bool operator<(const BigInt& rhs) const
 	{
-		if (isZero() && rhs.isZero())
+		if (is_zero() && rhs.is_zero())
 			return false;
 		if (negative_ != rhs.negative_)
 			return negative_;
 		
-		auto compareResult = digitsCompare(digits_, rhs.digits_);
+		auto compareResult = digits_compare(digits_, rhs.digits_);
 		
 		if (negative_)
 			return compareResult == std::strong_ordering::greater;
@@ -153,12 +153,12 @@ public:
 	}
 	constexpr bool operator<=(const BigInt& rhs) const
 	{
-		if (isZero() && rhs.isZero())
+		if (is_zero() && rhs.is_zero())
 			return true;
 		if (negative_ != rhs.negative_)
 			return negative_;
 		
-		auto compareResult = digitsCompare(digits_, rhs.digits_);
+		auto compareResult = digits_compare(digits_, rhs.digits_);
 		if (compareResult == std::strong_ordering::equal)
 			return true;
 		if (negative_)
@@ -168,12 +168,12 @@ public:
 	}
 	constexpr bool operator>(const BigInt& rhs) const
 	{
-		if (isZero() && rhs.isZero())
+		if (is_zero() && rhs.is_zero())
 			return false;
 		if (negative_ != rhs.negative_)
 			return rhs.negative_;
 		
-		auto compareResult = digitsCompare(digits_, rhs.digits_);
+		auto compareResult = digits_compare(digits_, rhs.digits_);
 		
 		if (negative_)
 			return compareResult == std::strong_ordering::less;
@@ -182,12 +182,12 @@ public:
 	}
 	constexpr bool operator>=(const BigInt& rhs) const
 	{
-		if (isZero() && rhs.isZero())
+		if (is_zero() && rhs.is_zero())
 			return true;
 		if (negative_ != rhs.negative_)
 			return rhs.negative_;
 		
-		auto compareResult = digitsCompare(digits_, rhs.digits_);
+		auto compareResult = digits_compare(digits_, rhs.digits_);
 		if (compareResult == std::strong_ordering::equal)
 			return true;
 		if (negative_)
@@ -197,7 +197,7 @@ public:
 	}
 	constexpr std::strong_ordering operator<=>(const BigInt& rhs) const
 	{
-		if (isZero() && rhs.isZero())
+		if (is_zero() && rhs.is_zero())
 			return std::strong_ordering::equal;
 		if (negative_ != rhs.negative_)
 		{
@@ -207,8 +207,8 @@ public:
 		}
 		
 		if (negative_)
-			return digitsCompare(rhs.digits_, digits_);
-		return digitsCompare(digits_, rhs.digits_);
+			return digits_compare(rhs.digits_, digits_);
+		return digits_compare(digits_, rhs.digits_);
 	}
 	
 	/// Arithmetic Operators
@@ -221,24 +221,24 @@ public:
 	}
 	constexpr BigInt& operator+=(const BigInt& rhs)
 	{
-		if (rhs.isZero())
+		if (rhs.is_zero())
 			return *this;
 		
 		if (negative_ == rhs.negative_)
 		{
-			addDigits(rhs);
+			add_digits(rhs);
 		}
-		else if (digitsCompare(digits_, rhs.digits_) == std::strong_ordering::greater)
+		else if (digits_compare(digits_, rhs.digits_) == std::strong_ordering::greater)
 		{
-			subtractDigits(rhs);
+			subtract_digits(rhs);
 		}
 		else
 		{
-			subtractLhsFromRhsDigits(rhs);
+			subtract_lhs_from_rhs_digits(rhs);
 			negate();
 		}
-		
-		removeLeadingZeros();
+
+		remove_leading_zeros();
 		return *this;
 	}
 	
@@ -250,24 +250,24 @@ public:
 	}
 	constexpr BigInt& operator-=(const BigInt& rhs)
 	{
-		if (rhs.isZero())
+		if (rhs.is_zero())
 			return *this;
 		
 		if (negative_ != rhs.negative_)
 		{
-			addDigits(rhs);
+			add_digits(rhs);
 		}
-		else if (digitsCompare(digits_, rhs.digits_) == std::strong_ordering::greater)
+		else if (digits_compare(digits_, rhs.digits_) == std::strong_ordering::greater)
 		{
-			subtractDigits(rhs);
+			subtract_digits(rhs);
 		}
 		else
 		{
-			subtractLhsFromRhsDigits(rhs);
+			subtract_lhs_from_rhs_digits(rhs);
 			negate();
 		}
-		
-		removeLeadingZeros();
+
+		remove_leading_zeros();
 		
 		return *this;
 	}
@@ -294,6 +294,12 @@ public:
 	
 	constexpr BigInt operator/(const BigInt& rhs) const
 	{
+		if (rhs.is_zero())
+			throw divide_by_zero();
+		
+		if (rhs.digits_.size() == 1)
+			return divide_small(static_cast<int64_t>(rhs.digits_[0]) * (rhs.negative_ * -1 + !rhs.negative_)).first;
+		
 		return divide_binary_search(rhs);
 	}
 	constexpr BigInt& operator/=(const BigInt& rhs)
@@ -319,7 +325,7 @@ public:
 	 *
 	 * @return True if the value is zero, false otherwise.
 	 */
-	[[nodiscard]] constexpr bool isZero() const noexcept
+	[[nodiscard]] constexpr bool is_zero() const noexcept
 	{
 		return digits_.size() == 1 && digits_[0] == static_cast<digit_t>(0);
 	}
@@ -335,7 +341,7 @@ public:
 	constexpr bool negate() noexcept
 	{
 		negative_ = !negative_;
-		return !isZero() && negative_;
+		return !is_zero() && negative_;
 	};
 	
 	//// Multiplication methods
@@ -364,28 +370,33 @@ public:
 	
 	//// Division methods
 	
-	[[nodiscard]] constexpr std::pair<BigInt, BigInt> divided_by_two() const
+	[[nodiscard]] constexpr std::pair<BigInt, BigInt> divide_small(int64_t rhs) const
 	{
 		uint64_t remainder = 0;
 		digit_storage_t digits;
+		bool result_negative = negative_ != (rhs < 0);
+		rhs = rhs < 0 ? -rhs : rhs;
 
 		for (size_t i = digits_.size() - 1; i < static_cast<size_t>(-1); i--)
 		{
-			digit_t next = digits_[i] / 2 + remainder * base / 2;
-			remainder = digits_[i] % 2 + remainder * base % 2;
+			digit_t next = (digits_[i] + remainder * base) / rhs;
+			remainder = (digits_[i] + remainder * base) % rhs;
 			digits.push_back(next);
 		}
 
 		std::ranges::reverse(digits);
 		
-		return {BigInt{std::move(digits)}, BigInt{remainder}};
+		auto quotient = BigInt{std::move(digits)};
+		quotient.remove_leading_zeros();
+		quotient.negative_ = result_negative;
+		auto ret_remainder = BigInt{remainder};
+		ret_remainder.negative_ = negative_;
+		
+		return {quotient, ret_remainder};
 	}
 	
 	[[nodiscard]] constexpr BigInt divide_binary_search(const BigInt& rhs) const
 	{
-		if (rhs.isZero())
-			throw divide_by_zero();
-		
 		BigInt low{0};
 		BigInt mid;
 		BigInt high{*this};
@@ -394,9 +405,9 @@ public:
 		BigInt quotient{0};
 		while (low <= high)
 		{
-			mid = low + (high - low).divided_by_two().first;
+			mid = low + (high - low).divide_small(2).first;
 			
-			if (digitsCompare((mid * rhs).digits_, digits_) == std::strong_ordering::greater)
+			if (digits_compare((mid * rhs).digits_, digits_) == std::strong_ordering::greater)
 			{
 				high = mid - 1;
 			}
@@ -452,7 +463,7 @@ private:
 	
 	/// Helper methods
 
-	constexpr bool removeLeadingZeros()
+	constexpr bool remove_leading_zeros()
 	{
 
 		if (digits_.size() == 1)
@@ -478,7 +489,7 @@ private:
 	
 	/// Addition methods
 	
-	constexpr BigInt& addDigits(const BigInt& rhs)
+	constexpr BigInt& add_digits(const BigInt& rhs)
 	{
 		// We're going to need at least as much storage for the digits as rhs.
 		// TODO: Add optimisation that checks if we need rhs.size() + 1
@@ -521,7 +532,7 @@ private:
 		return *this;
 	}
 
-	constexpr BigInt& subtractDigits(const BigInt& rhs)
+	constexpr BigInt& subtract_digits(const BigInt& rhs)
 	{
 		int64_t carry = 0;
 		size_t i = 0;
@@ -551,7 +562,7 @@ private:
 		return *this;
 	}
 	
-	constexpr BigInt& subtractLhsFromRhsDigits(const BigInt& rhs)
+	constexpr BigInt& subtract_lhs_from_rhs_digits(const BigInt& rhs)
 	{
 		//assert(!digitsLessThanFullPrecision(rhs, digits_) && "Subtraction result would be negative, and does thus not works with this function.");
 		

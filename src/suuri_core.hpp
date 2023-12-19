@@ -13,7 +13,7 @@ typedef std::vector<digit_t> digit_storage_t;
 
 inline constexpr digit_t base = 2147483648;
 
-static constexpr uint32_t convertCharToInt(char c, uint32_t b = 10)
+static constexpr uint32_t convert_char_to_int(char c, uint32_t b = 10)
 {
 	uint32_t retval;
 	
@@ -32,7 +32,7 @@ static constexpr uint32_t convertCharToInt(char c, uint32_t b = 10)
 	return retval;
 }
 
-inline constexpr std::strong_ordering digitsCompare(const digit_storage_t& lhs, const digit_storage_t& rhs) noexcept
+inline constexpr std::strong_ordering digits_compare(const digit_storage_t& lhs, const digit_storage_t& rhs) noexcept
 {
 	if (lhs.size() != rhs.size())
 		return lhs.size() < rhs.size() ? std::strong_ordering::less : std::strong_ordering::greater;
