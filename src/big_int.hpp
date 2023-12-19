@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <concepts>
 #include <string>
-#include <string_view>
+#include <sstream>
 
 
 namespace suuri
@@ -420,7 +420,28 @@ public:
 	
 	[[nodiscard]] constexpr std::string to_string() const
 	{
-		return "";
+		// TODO: This is really slow. Make it faster.
+		std::vector<char> digits;
+		
+		BigInt num = *this;
+		num.negative_ = false;
+		
+		while (num >= 10)
+		{
+			digits.push_back(static_cast<char>((num % 10).digits_[0]));
+			num /= 10;
+		}
+		digits.push_back(static_cast<char>(num.digits_[0]));
+		
+		std::string ret;
+		ret.resize(digits.size());
+
+		for (int i = 0; i < ret.size(); i++)
+		{
+			ret[ret.size() - i - 1] = static_cast<char>('0' + digits[i]);
+		}
+
+		return ret;
 	}
 	
 private:

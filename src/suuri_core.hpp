@@ -1,8 +1,9 @@
 #pragma once
 
-#include <cstdint>
-#include <vector>
 #include <compare>
+#include <cstdint>
+#include <stdexcept>
+#include <vector>
 
 namespace suuri
 {
