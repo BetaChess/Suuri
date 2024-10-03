@@ -50,7 +50,7 @@ int main()
 
 	std::cout << s;
 	std::cout << '\n' << elapsed.count() << "s\n";
-	std::cout << suuri::is_big_int_t<suuri::big_int_t>;
+	std::cout << suuri::is_big_int_v<suuri::big_int_t>;
 
 	return 0;
 }

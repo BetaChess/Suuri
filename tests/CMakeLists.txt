@@ -9,9 +9,8 @@ set(SOURCES
 	int_tests/subtraction.cpp
 	int_tests/multiplication.cpp
 	int_tests/division.cpp
-	../src/exception.hpp
-	../src/suuri_math.hpp
-	../src/concepts.hpp
+	int_tests/suuri_math.cpp
+	primitive_tests/suuri_math.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

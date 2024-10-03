@@ -5,6 +5,7 @@
 #include "suuri_concept.hpp"
 
 #include <algorithm>
+#include <assert.h>
 #include <concepts>
 #include <ostream>
 #include <string>
@@ -463,7 +464,47 @@ public:
 
 		return ret;
 	}
-	
+
+	//// Math operations
+
+	[[nodiscard]] constexpr int8_t sgn() const noexcept
+	{
+		if (is_zero())
+			return 0;
+
+		return negative_ ? -1 : 1;
+	}
+
+	[[nodiscard]] constexpr BigInt abs() const noexcept
+	{
+		BigInt ret = *this;
+		ret.negative_ = false;
+		return ret;
+	}
+
+	[[nodiscard]] constexpr BigInt pow(uint64_t n) const
+	{
+#ifndef ZERO_POW_ZERO_IS_ONE
+		assert(!(is_zero() && n == 0) && "0 to the power of 0 is undefined");
+#endif
+		if (n == 0)
+			return 1;
+
+		auto x = *this;
+		decltype(x) y = 1;
+		while (n > 1)
+		{
+			if (n % 2)
+			{
+				y = x * y;
+				n--;
+			}
+			x *= x;
+			n /= 2;
+		}
+		return x * y;
+	}
+
 private:
 	digit_storage_t digits_;
 	bool negative_;
