@@ -10,6 +10,8 @@ set(SOURCES
 	int_tests/multiplication.cpp
 	int_tests/division.cpp
 	../src/exception.hpp
+	../src/suuri_math.hpp
+	../src/concepts.hpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

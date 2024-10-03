@@ -1,12 +1,13 @@
 #pragma once
 
 #include "suuri_core.hpp"
-#include "exception.hpp"
+#include "suuri_exception.hpp"
+#include "suuri_concept.hpp"
 
 #include <algorithm>
 #include <concepts>
-#include <string>
 #include <ostream>
+#include <string>
 
 
 namespace suuri
@@ -621,5 +622,8 @@ private:
 };
 
 typedef BigInt big_int_t;
+
+template<>
+struct is_big_int<BigInt> : std::true_type {};
 
 }

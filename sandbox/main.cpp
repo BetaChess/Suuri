@@ -1,6 +1,8 @@
 #include <big_int.hpp>
+#include <suuri_concept.hpp>
 
 #include <iostream>
+#include <chrono>
 
 
 suuri::big_int_t fact(uint64_t i){
@@ -15,27 +17,40 @@ suuri::big_int_t fact(uint64_t i){
 	return res;
 }
 
+suuri::big_int_t fib(uint64_t i)
+{
+	static std::vector<suuri::big_int_t> mem = {0, 1};
+
+	if (mem.size() > i)
+		return mem[i];
+
+	while (mem.size() <= i)
+	{
+		const suuri::big_int_t f1 = fib(mem.size() - 1);
+		const suuri::big_int_t f2 = fib(mem.size() - 2);
+		mem.emplace_back(f1 + f2);
+	}
+
+	return mem[i];
+}
+
 
 int main()
 {
-//	suuri::big_int_t num{"213744164203001278214900687669469982484517189418340686233600000000"};
-//	std::cout << (num - 1).to_string();
-	
-//	suuri::digit_storage_t digits{0, 2075082752, 1478416123, 721428841, 1613066482, 1627084780, 63613171, 2};
-//	suuri::big_int_t num{digits};
-//	suuri::big_int_t a{"427488328406002556429801375338939964969034378836681372467200000000"};
-//	
-//	std::cout << (suuri::big_int_t{"427488328406002556429801375338939964969034378836681372467200000000"}/10).to_string();
-//	
-	auto s = fact(20000).to_string();
-	
-	std::cout << s;
+	// Add start chrono timer
+	auto start = std::chrono::high_resolution_clock::now();
 
-//	for (int i = 2; i < 500; i++)
-//	{
-//		if (fact(i).to_string().find(':') != std::string::npos)
-//			std::cout << i << '\n';
-//	}
+	auto num = fib(50000);
+	auto s = num.to_string();
+
+	// End timer
+	auto end = std::chrono::high_resolution_clock::now();
+	// Calculate duration
+	std::chrono::duration<double> elapsed = end - start;
+
+	std::cout << s;
+	std::cout << '\n' << elapsed.count() << "s\n";
+	std::cout << suuri::is_big_int_t<suuri::big_int_t>;
 
 	return 0;
 }
