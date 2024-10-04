@@ -11,6 +11,7 @@ set(SOURCES
 	int_tests/division.cpp
 	int_tests/suuri_math.cpp
 	primitive_tests/suuri_math.cpp
+	int_tests/test_helpers.hpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

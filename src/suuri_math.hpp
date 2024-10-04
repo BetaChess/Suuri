@@ -70,7 +70,7 @@ template<typename T>
 constexpr T pow(T x, uint64_t n) noexcept
 {
 #ifndef ZERO_POW_ZERO_IS_ONE
-  assert(!(is_zero() && n == 0) && "0 to the power of 0 is undefined");
+  assert(!(x == 0 && n == 0) && "0 to the power of 0 is undefined");
 #endif
   if (n == 0)
     return 1;
