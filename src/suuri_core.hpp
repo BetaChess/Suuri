@@ -37,7 +37,7 @@ inline constexpr std::strong_ordering digits_compare(const digit_storage_t& lhs,
 	if (lhs.size() != rhs.size())
 		return lhs.size() < rhs.size() ? std::strong_ordering::less : std::strong_ordering::greater;
 	
-	// Start from the most significant digit. If any digit is not equal, return digit < otherDigit
+	// Start from the most significant digit. If any digit is not equal, return the ordering
 	for (size_t i = 0; i < lhs.size(); i++)
 		if (lhs[lhs.size() - 1 - i] != rhs[rhs.size() - 1 - i])
 			return lhs[lhs.size() - 1 - i] < rhs[rhs.size() - 1 - i] ? std::strong_ordering::less : std::strong_ordering::greater;

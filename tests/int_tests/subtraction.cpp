@@ -1,6 +1,4 @@
-#include <gtest/gtest.h>
-
-#include <big_int.hpp>
+#include "test_helpers.hpp"
 
 namespace su = suuri;
 
@@ -675,3 +673,35 @@ TEST(IntSubtraction, IntegersPositiveNegative)
 		EXPECT_EQ(c, su::big_int_t("987654312098765431209876543120"));
 	}
 }
+
+
+TEST (IntSubtraction, Random)
+{
+	auto binOp = [](const su::big_int_t& a, const su::big_int_t& b) { return a - b; };
+
+	// Test 8-bit integer as input
+	run_pre_generated_test_file_bin_op<int8_t>(
+			"../../random_tests/int/subtraction/subtraction_8bit_input.test",
+			binOp);
+
+	// Test 16-bit integer as input
+	run_pre_generated_test_file_bin_op<int16_t>(
+			"../../random_tests/int/subtraction/subtraction_16bit_input.test",
+			binOp);
+
+	// Test 32-bit integer as input
+	run_pre_generated_test_file_bin_op<int32_t>(
+			"../../random_tests/int/subtraction/subtraction_32bit_input.test",
+			binOp);
+
+	// Test 64-bit integer as input
+	run_pre_generated_test_file_bin_op<int64_t>(
+			"../../random_tests/int/subtraction/subtraction_64bit_input.test",
+			binOp);
+
+	// Test large integer as input
+	run_pre_generated_test_file_bin_op<std::string, false>(
+			"../../random_tests/int/subtraction/subtraction_large_input.test",
+			binOp);
+}
+

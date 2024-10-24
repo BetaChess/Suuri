@@ -493,28 +493,30 @@ TEST (IntAddition, IntegersPositiveNegative)
 
 TEST (IntAddition, Random)
 {
+	auto binOp = [](const su::big_int_t& a, const su::big_int_t& b) { return a + b; };
+
 	// Test 8-bit integer as input
 	run_pre_generated_test_file_bin_op<int8_t>(
 			"../../random_tests/int/addition/addition_8bit_input.test",
-			[](const su::big_int_t& a, const su::big_int_t& b) { return a + b; });
+			binOp);
 
 	// Test 16-bit integer as input
 	run_pre_generated_test_file_bin_op<int16_t>(
 			"../../random_tests/int/addition/addition_16bit_input.test",
-			[](const su::big_int_t& a, const su::big_int_t& b) { return a + b; });
+			binOp);
 
 	// Test 32-bit integer as input
 	run_pre_generated_test_file_bin_op<int32_t>(
 			"../../random_tests/int/addition/addition_32bit_input.test",
-			[](const su::big_int_t& a, const su::big_int_t& b) { return a + b; });
+			binOp);
 
 	// Test 64-bit integer as input
 	run_pre_generated_test_file_bin_op<int64_t>(
 			"../../random_tests/int/addition/addition_64bit_input.test",
-			[](const su::big_int_t& a, const su::big_int_t& b) { return a + b; });
+			binOp);
 
 	// Test large integer as input
 	run_pre_generated_test_file_bin_op<std::string, false>(
 			"../../random_tests/int/addition/addition_large_input.test",
-			[](const su::big_int_t& a, const su::big_int_t& b) { return a + b; });
+			binOp);
 }

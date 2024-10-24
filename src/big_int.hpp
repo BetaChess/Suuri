@@ -436,7 +436,8 @@ public:
 	// None so far
 	
 	//// Conversion methods
-	
+
+	// TODO: Convert to different base string
 	[[nodiscard]] constexpr std::string to_string() const
 	{
 		// TODO: This is slow ish, but definitely usable for most things. Make it faster.

@@ -89,8 +89,4 @@ constexpr T pow(T x, uint64_t n) noexcept
   return x * y;
 }
 
-
-
-
-
 }

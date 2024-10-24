@@ -1,3 +1,6 @@
+#include "test_helpers.hpp"
+
+
 #include <gtest/gtest.h>
 
 #include <big_int.hpp>
@@ -393,4 +396,34 @@ TEST (IntDivision, Special)
 			ASSERT_EQ(b, 0);
 		}
 	}
+}
+
+TEST (IntDivision, Random)
+{
+	auto binOp = [](const su::big_int_t& a, const su::big_int_t& b) { return a / b; };
+
+	// Test 8-bit integer as input
+	run_pre_generated_test_file_bin_op<int8_t>(
+			"../../random_tests/int/division/division_8bit_input.test",
+			binOp);
+
+	// Test 16-bit integer as input
+	run_pre_generated_test_file_bin_op<int16_t>(
+			"../../random_tests/int/division/division_16bit_input.test",
+			binOp);
+
+	// Test 32-bit integer as input
+	run_pre_generated_test_file_bin_op<int32_t>(
+			"../../random_tests/int/division/division_32bit_input.test",
+			binOp);
+
+	// Test 64-bit integer as input
+	run_pre_generated_test_file_bin_op<int64_t>(
+			"../../random_tests/int/division/division_64bit_input.test",
+			binOp);
+
+	// Test large integer as input
+	run_pre_generated_test_file_bin_op<std::string, false>(
+			"../../random_tests/int/division/division_large_input.test",
+			binOp);
 }
