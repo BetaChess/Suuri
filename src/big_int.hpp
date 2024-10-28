@@ -7,9 +7,9 @@
 #include <algorithm>
 #include <assert.h>
 #include <concepts>
+#include <iostream>
 #include <ostream>
 #include <string>
-
 
 namespace suuri
 {
@@ -376,6 +376,36 @@ public:
 
 		return ret;
 	}
+
+	[[nodiscard]] constexpr BigInt karatsuba_multiplication(const BigInt& rhs) const
+	{
+		if (digits_.size() < long_multiplication_digit_threshold || rhs.digits_.size() < long_multiplication_digit_threshold)
+			return long_multiplication(rhs);
+
+		const uint64_t n = digits_.size() > rhs.digits_.size() ? digits_.size() : rhs.digits_.size();
+		const uint64_t half = n / 2;
+		auto x_1 = *this; // x_0
+		x_1.right_shift(half);
+		auto x_0 = *this; // x_1
+		if (x_0.digits_.size() > half)
+			x_0.digits_.resize(digits_.size() - x_1.digits_.size());
+		auto y_1 = rhs; // y_0
+		y_1.right_shift(half);
+		auto y_0 = rhs; // y_1
+		if (y_0.digits_.size() > half)
+			y_0.digits_.resize(rhs.digits_.size() - y_1.digits_.size());
+		
+		auto z_0 = x_0.karatsuba_multiplication(y_0);
+		auto z_2 = x_1.karatsuba_multiplication(y_1);
+		auto x0_x1 = x_1 + x_0;
+		auto y0_y1 = y_1 + y_0;
+		auto z_1 = x0_x1.karatsuba_multiplication(y0_y1) - z_2 - z_0;
+
+		z_2.left_shift(2*half);
+		z_1.left_shift(half);
+
+		return z_0 + z_1 + z_2;
+	}
 	
 	//// Division methods
 	
@@ -509,6 +539,10 @@ public:
 private:
 	digit_storage_t digits_;
 	bool negative_;
+
+	//// Static constexpr member variables
+
+	static constexpr size_t long_multiplication_digit_threshold = 3;
 	
 	//// Private methods
 	
@@ -647,6 +681,35 @@ private:
 		if (digits_[digits_.size() - 1] == 0)
 			digits_.pop_back();
 		
+		return *this;
+	}
+
+	/// Shift methods
+
+	constexpr BigInt& left_shift(uint64_t shift_by)
+	{
+		auto copy = digits_;
+		digits_.clear();
+		digits_.resize(shift_by + copy.size());
+
+		for (size_t i = 0; i < copy.size(); i++)
+		{
+			digits_[i + shift_by] = copy[i];
+		}
+
+		return *this;
+	}
+
+	constexpr BigInt& right_shift(uint64_t shift_by)
+	{
+		if (shift_by >= digits_.size())
+		{
+			digits_ = {0};
+			return *this;
+		}
+
+		digits_.erase(digits_.begin(), digits_.begin() + shift_by);
+
 		return *this;
 	}
 
