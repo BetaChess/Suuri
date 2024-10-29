@@ -461,10 +461,44 @@ public:
 		
 		return quotient;
 	}
-	
+
+	//// Misc mutators
+
+	/// Shift methods
+
+	constexpr BigInt& left_shift(uint64_t shift_by)
+	{
+		if (is_zero())
+			return *this;
+
+		auto copy = digits_;
+		digits_.clear();
+		digits_.resize(shift_by + copy.size());
+
+		for (size_t i = 0; i < copy.size(); i++)
+		{
+			digits_[i + shift_by] = copy[i];
+		}
+
+		return *this;
+	}
+
+	constexpr BigInt& right_shift(uint64_t shift_by)
+	{
+		if (shift_by >= digits_.size())
+		{
+			digits_ = {0};
+			return *this;
+		}
+
+		digits_.erase(digits_.begin(), digits_.begin() + shift_by);
+
+		return *this;
+	}
+
 	//// State accessor methods
 	// None so far
-	
+
 	//// Conversion methods
 
 	// TODO: Convert to different base string
@@ -534,6 +568,24 @@ public:
 			n /= 2;
 		}
 		return x * y;
+	}
+
+	//// Static methods
+
+	template<typename Generator>
+		requires std::invocable<Generator, uint32_t, uint32_t>
+	static constexpr BigInt random_of_size(size_t num_digits, Generator&& generator)
+	{
+		if (num_digits == 0)
+			return 0;
+
+		BigInt ret;
+		ret.digits_.resize(num_digits);
+
+		for (auto& digit : ret.digits_)
+			digit = generator(0, base);
+
+		return ret;
 	}
 
 private:
@@ -681,35 +733,6 @@ private:
 		if (digits_[digits_.size() - 1] == 0)
 			digits_.pop_back();
 		
-		return *this;
-	}
-
-	/// Shift methods
-
-	constexpr BigInt& left_shift(uint64_t shift_by)
-	{
-		auto copy = digits_;
-		digits_.clear();
-		digits_.resize(shift_by + copy.size());
-
-		for (size_t i = 0; i < copy.size(); i++)
-		{
-			digits_[i + shift_by] = copy[i];
-		}
-
-		return *this;
-	}
-
-	constexpr BigInt& right_shift(uint64_t shift_by)
-	{
-		if (shift_by >= digits_.size())
-		{
-			digits_ = {0};
-			return *this;
-		}
-
-		digits_.erase(digits_.begin(), digits_.begin() + shift_by);
-
 		return *this;
 	}
 

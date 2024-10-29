@@ -1,56 +1,34 @@
 #include <big_int.hpp>
 #include <suuri_concept.hpp>
+#include <suuri_math.hpp>
 
 #include <iostream>
 #include <chrono>
 
-
-suuri::big_int_t fact(uint64_t i){
-	suuri::big_int_t res = 1;
-
-	for (int j = 2; j <= i; j++)
-	{
-//		std::cout << j << '\n';
-		res *= j;
-	}
-	
-	return res;
-}
-
-suuri::big_int_t fib(uint64_t i)
-{
-	static std::vector<suuri::big_int_t> mem = {0, 1};
-
-	if (mem.size() > i)
-		return mem[i];
-
-	while (mem.size() <= i)
-	{
-		const suuri::big_int_t f1 = fib(mem.size() - 1);
-		const suuri::big_int_t f2 = fib(mem.size() - 2);
-		mem.emplace_back(f1 + f2);
-	}
-
-	return mem[i];
-}
-
-
 int main()
 {
-	// Add start chrono timer
-	auto start = std::chrono::high_resolution_clock::now();
+	// // Add start chrono timer
+	// auto start = std::chrono::high_resolution_clock::now();
+	//
+	// auto base = suuri::big_int_t{2};
+	// auto p = suuri::pow(base, 136279841);
+	// p -= 1;
+	//
+	// // End timer
+	// auto end = std::chrono::high_resolution_clock::now();
+	// // Calculate duration
+	// std::chrono::duration<double> elapsed = end - start;
+	//
+	// // std::cout << s;
+	// std::cout << '\n' << elapsed.count() << "s\n";
+	// std::cout << suuri::is_big_int_v<suuri::big_int_t>;
 
-	auto num = fib(50000);
-	auto s = num.to_string();
 
-	// End timer
-	auto end = std::chrono::high_resolution_clock::now();
-	// Calculate duration
-	std::chrono::duration<double> elapsed = end - start;
+	suuri::big_int_t a = suuri::big_int_t("5750445218329239395");
+	suuri::big_int_t b = suuri::big_int_t("5833138404614241945");
+	suuri::big_int_t expected = suuri::big_int_t("33543142846666615686606727236355423275");
 
-	std::cout << s;
-	std::cout << '\n' << elapsed.count() << "s\n";
-	std::cout << suuri::is_big_int_v<suuri::big_int_t>;
+	std::cout << '\n' << (a.karatsuba_multiplication(b)).to_string();
 
 	return 0;
 }
