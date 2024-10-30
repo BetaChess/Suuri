@@ -397,9 +397,11 @@ public:
 		
 		auto z_0 = x_0.karatsuba_multiplication(y_0);
 		auto z_2 = x_1.karatsuba_multiplication(y_1);
-		auto x0_x1 = x_1 + x_0;
-		auto y0_y1 = y_1 + y_0;
-		auto z_1 = x0_x1.karatsuba_multiplication(y0_y1) - z_2 - z_0;
+		// x_0 and x_0 won't be used after this point, so we'll reuse them as the sum of the two
+		x_1 += x_0;
+		// Same with y
+		y_1 += y_0;
+		auto z_1 = x_1.karatsuba_multiplication(y_1) - z_2 - z_0;
 
 		z_2.left_shift(2*half);
 		z_1.left_shift(half);
