@@ -7,7 +7,7 @@
 namespace su = suuri;
 
 template<typename T, bool convertToInt = true>
-void run_pre_generated_test_file_bin_op(std::string fileName, su::big_int_t (*binOp)(const su::big_int_t& l, const su::big_int_t& r))
+void run_pre_generated_test_file_bin_op(std::string fileName, su::big_int_t (*binOp)(const su::big_int_t &l, const su::big_int_t &r))
 {
 	std::fstream file;
 	file.open(fileName, std::ios::in);
@@ -34,7 +34,7 @@ void run_pre_generated_test_file_bin_op(std::string fileName, su::big_int_t (*bi
 		file >> expected;
 
 		EXPECT_EQ(binOp(su::big_int_t{left}, su::big_int_t{right}), su::big_int_t{expected})
-				<< "Failed at line " << line_counter;
+				<< "Failed at line " << line_counter << " in file " << fileName;
 	}
 
 	file.close();

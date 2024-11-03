@@ -27,11 +27,11 @@ uint32_t pcg_random(uint32_t &seed, uint32_t min, uint32_t max)
 }
 
 
-#define STANDARDPARAMS RangeMultiplier(2)->Range(1, 1 << 16)->UseManualTime()
+#define STANDARDPARAMS RangeMultiplier(2)->Range(1, 1 << 18)->UseManualTime()
 
 static void BM_integer_long_multiplication_same_length(benchmark::State &state)
-{                                                                                                      
-	state.SetLabel((std::stringstream{} << state.range(0)).str());                                     
+{
+	state.SetLabel((std::stringstream{} << state.range(0)).str());
 
 	// REUSABLE VARIABLES
 	suuri::big_int_t a, b, c;
@@ -40,8 +40,8 @@ static void BM_integer_long_multiplication_same_length(benchmark::State &state)
 		return pcg_random(seed, min, max);
 	};
 
-	for (auto _: state)                                                                                
-	{                                                                                                  
+	for (auto _: state)
+	{
 		// SETUP CODE
 		a = suuri::big_int_t::random_of_size(state.range(0), generator);
 		b = suuri::big_int_t::random_of_size(state.range(0), generator);
@@ -52,10 +52,10 @@ static void BM_integer_long_multiplication_same_length(benchmark::State &state)
 		c = a.long_multiplication(b);
 
 		// ---
-		auto end = std::chrono::high_resolution_clock::now();                                          
-		auto elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<double>>(end - start); 
-		state.SetIterationTime(elapsed_seconds.count());                                               
-	}                                                                                                  
+		auto end = std::chrono::high_resolution_clock::now();
+		auto elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
+		state.SetIterationTime(elapsed_seconds.count());
+	}
 }
 BENCHMARK(BM_integer_long_multiplication_same_length)->STANDARDPARAMS;
 

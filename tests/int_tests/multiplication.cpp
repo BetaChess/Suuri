@@ -7,7 +7,7 @@
 
 namespace su = suuri;
 
-TEST(IntMultiplication, IntegersPositivePositive)
+TEST (IntMultiplication, IntegersPositivePositive)
 {
 	// Test multiplication of small integers (result should be less than 1073741824)
 	{
@@ -51,34 +51,34 @@ TEST(IntMultiplication, IntegersPositivePositive)
 		a = 50;
 		b = 50;
 		c = a * b;
-		
+
 		EXPECT_EQ(c, 2500);
-		
+
 		a = 256;
 		b = 256;
 		c = a * b;
-		
+
 		EXPECT_EQ(c, 65536);
-		
+
 		a = 65536;
 		b = 65536;
 		c = a * b;
-		
+
 		EXPECT_EQ(c, 4294967296);
-		
+
 		a = 433;
 		b = 129;
 		c = a * b;
-		
+
 		EXPECT_EQ(c, 55857);
 	}
-	
+
 	// Test multiplication of large integers
 	{
 		su::big_int_t a = 536870911;
 		su::big_int_t b = 536870911;
 		su::big_int_t c = a * b;
-		
+
 		EXPECT_EQ(c, 288230375077969921LL);
 
 		a = 11111;
@@ -87,30 +87,30 @@ TEST(IntMultiplication, IntegersPositivePositive)
 
 		EXPECT_EQ(c, 12345555565432LL);
 	}
-	
+
 	// Test of large integers (using string initializer)
 	{
 		su::big_int_t a = su::big_int_t("123456789123456789123456789123456789");
 		su::big_int_t b = su::big_int_t("987654321987654321987654321987654321");
 		su::big_int_t c = a * b;
-		
+
 		EXPECT_EQ(c, su::big_int_t("121932631356500531591068431825636331816338969581771069347203169112635269"));
-		
+
 		a = su::big_int_t("576460752303423488");
 		b = su::big_int_t("576460752303423488");
 		c = a * b;
-		
+
 		EXPECT_EQ(c, su::big_int_t("332306998946228968225951765070086144"));
-		
+
 		a = su::big_int_t("132922799578491587");
 		b = su::big_int_t("132922799578491587");
 		c = a * b;
-		
+
 		EXPECT_EQ(c, su::big_int_t("17668470647783843218636542229778569"));
 	}
 }
 
-TEST(IntMultiplication, IntegersNegativeNegative)
+TEST (IntMultiplication, IntegersNegativeNegative)
 {
 	// Test multiplication of small integers (result should be less than 1073741824)
 	{
@@ -154,34 +154,34 @@ TEST(IntMultiplication, IntegersNegativeNegative)
 		a = -50;
 		b = -50;
 		c = a * b;
-		
+
 		EXPECT_EQ(c, 2500);
-		
+
 		a = -256;
 		b = -256;
 		c = a * b;
-		
+
 		EXPECT_EQ(c, 65536);
-		
+
 		a = -65536;
 		b = -65536;
 		c = a * b;
-		
+
 		EXPECT_EQ(c, 4294967296);
-		
+
 		a = -433;
 		b = -129;
 		c = a * b;
-		
+
 		EXPECT_EQ(c, 55857);
 	}
-	
+
 	// Test multiplication of large integers
 	{
 		su::big_int_t a = -536870911;
 		su::big_int_t b = -536870911;
 		su::big_int_t c = a * b;
-		
+
 		EXPECT_EQ(c, 288230375077969921LL);
 
 		a = -11111;
@@ -190,30 +190,30 @@ TEST(IntMultiplication, IntegersNegativeNegative)
 
 		EXPECT_EQ(c, 12345555565432LL);
 	}
-	
+
 	// Test of large integers (using string initializer)
 	{
 		su::big_int_t a = su::big_int_t("-123456789123456789123456789123456789");
 		su::big_int_t b = su::big_int_t("-987654321987654321987654321987654321");
 		su::big_int_t c = a * b;
-		
+
 		EXPECT_EQ(c, su::big_int_t("121932631356500531591068431825636331816338969581771069347203169112635269"));
-		
+
 		a = su::big_int_t("-576460752303423488");
 		b = su::big_int_t("-576460752303423488");
 		c = a * b;
-		
+
 		EXPECT_EQ(c, su::big_int_t("332306998946228968225951765070086144"));
-		
+
 		a = su::big_int_t("-132922799578491587");
 		b = su::big_int_t("-132922799578491587");
 		c = a * b;
-		
+
 		EXPECT_EQ(c, su::big_int_t("17668470647783843218636542229778569"));
 	}
 }
 
-TEST(IntMultiplication, IntegersPositiveNegative)
+TEST (IntMultiplication, IntegersPositiveNegative)
 {
 	// Test multiplication of small integers (result should be less than 1073741824)
 	{
@@ -257,34 +257,34 @@ TEST(IntMultiplication, IntegersPositiveNegative)
 		a = 50;
 		b = -50;
 		c = a * b;
-		
+
 		EXPECT_EQ(c, -2500);
-		
+
 		a = 256;
 		b = -256;
 		c = a * b;
-		
+
 		EXPECT_EQ(c, -65536);
-		
+
 		a = 65536;
 		b = -65536;
 		c = a * b;
-		
+
 		EXPECT_EQ(c, -4294967296);
-		
+
 		a = 433;
 		b = -129;
 		c = a * b;
-		
+
 		EXPECT_EQ(c, -55857);
 	}
-	
+
 	// Test multiplication of large integers
 	{
 		su::big_int_t a = 536870911;
 		su::big_int_t b = -536870911;
 		su::big_int_t c = a * b;
-		
+
 		EXPECT_EQ(c, -288230375077969921LL);
 
 		a = 11111;
@@ -293,32 +293,32 @@ TEST(IntMultiplication, IntegersPositiveNegative)
 
 		EXPECT_EQ(c, -12345555565432LL);
 	}
-	
+
 	// Test of large integers (using string initializer)
 	{
 		su::big_int_t a = su::big_int_t("123456789123456789123456789123456789");
 		su::big_int_t b = su::big_int_t("-987654321987654321987654321987654321");
 		su::big_int_t c = a * b;
-		
+
 		EXPECT_EQ(c, su::big_int_t("-121932631356500531591068431825636331816338969581771069347203169112635269"));
-		
+
 		a = su::big_int_t("576460752303423488");
 		b = su::big_int_t("-576460752303423488");
 		c = a * b;
-		
+
 		EXPECT_EQ(c, su::big_int_t("-332306998946228968225951765070086144"));
-		
+
 		a = su::big_int_t("132922799578491587");
 		b = su::big_int_t("-132922799578491587");
 		c = a * b;
-		
+
 		EXPECT_EQ(c, su::big_int_t("-17668470647783843218636542229778569"));
 	}
 }
 
 TEST (IntMultiplication, Random)
 {
-	auto binOp = [](const su::big_int_t& a, const su::big_int_t& b) { return a * b; };
+	auto binOp = [](const su::big_int_t &a, const su::big_int_t &b) { return a * b; };
 
 	// Test 8-bit integer as input
 	run_pre_generated_test_file_bin_op<int8_t>(
@@ -348,7 +348,7 @@ TEST (IntMultiplication, Random)
 
 TEST (IntMultiplication, KaratsubaRandom)
 {
-	auto binOp = [](const su::big_int_t& a, const su::big_int_t& b) { return a.karatsuba_multiplication(b); };
+	auto binOp = [](const su::big_int_t &a, const su::big_int_t &b) { return a.karatsuba_multiplication(b); };
 
 	// Test 8-bit integer as input
 	run_pre_generated_test_file_bin_op<int8_t>(
@@ -375,4 +375,3 @@ TEST (IntMultiplication, KaratsubaRandom)
 			"../../random_tests/int/multiplication/multiplication_large_input.test",
 			binOp);
 }
-
