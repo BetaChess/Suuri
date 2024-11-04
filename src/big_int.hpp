@@ -16,6 +16,33 @@ namespace suuri
 
 class BigInt
 {
+private:
+	struct BigIntView {
+		constexpr BigIntView(const BigInt &rhs, bool negative = false) : digits_{rhs.digits_} {};
+
+		const digit_storage_t &digits_;
+	};
+
+	struct BigIntMutView {
+		constexpr BigIntMutView(BigInt &rhs, bool negative = false) : digits_{rhs.digits_} {};
+
+		digit_storage_t &digits_;
+	};
+
+	struct BigIntViewWithSign {
+		constexpr BigIntViewWithSign(const BigInt &rhs, bool negative = false) : digits_{rhs.digits_}, negative_{negative} {};
+
+		const digit_storage_t &digits_;
+		bool negative_;
+	};
+
+	struct BigIntMutViewWithSign {
+		constexpr BigIntMutViewWithSign(BigInt &rhs, bool negative = false) : digits_{rhs.digits_}, negative_{negative} {};
+
+		digit_storage_t &digits_;
+		bool negative_;
+	};
+
 public:
 	//// Constructors
 
@@ -350,8 +377,7 @@ public:
 
 	[[nodiscard]] constexpr BigInt long_multiplication(const BigInt &rhs) const
 	{
-		BigInt ret;
-		ret.digits_.resize(digits_.size() + rhs.digits_.size());
+		BigInt ret{digit_storage_t(digits_.size() + rhs.digits_.size()), static_cast<bool>(negative_ ^ rhs.negative_)};
 
 		for (size_t i = 0; i < digits_.size(); i++)
 		{
@@ -365,48 +391,30 @@ public:
 			}
 		}
 
-		ret.negative_ = negative_ ^ rhs.negative_;
 		if (ret.digits_.back() == 0)
 			ret.digits_.pop_back();
 
 		return ret;
 	}
 
+	// [[nodiscard]] constexpr BigInt karatsuba_multiplication(const BigInt &rhs) const
+	// {
+	// 	digit_storage_t storage;
+	// 	storage.reserve(digits_.size() + rhs.digits_.size());
+	// 	BigInt ret{std::move(storage), negative_};
+	// 	ret.copy_digits_from(*this);
+	// 	return ret.karatsuba_multiplication_ref(rhs);
+	// }
+
 	[[nodiscard]] constexpr BigInt karatsuba_multiplication(const BigInt &rhs) const
 	{
-		if (digits_.size() < long_multiplication_digit_threshold || rhs.digits_.size() < long_multiplication_digit_threshold)
-			return long_multiplication(rhs);
-
-		const uint64_t n = digits_.size() > rhs.digits_.size() ? digits_.size() : rhs.digits_.size();
-		const uint64_t half = n / 2;
-		auto x_1 = get_copy_right_shifted_by(*this, half);
-		auto x_0 = *this;
-		if (x_0.digits_.size() > half)
-			x_0.digits_.resize(digits_.size() - x_1.digits_.size());
-		auto y_1 = get_copy_right_shifted_by(rhs, half);
-
-		auto y_0 = rhs;
-		if (y_0.digits_.size() > half)
-			y_0.digits_.resize(rhs.digits_.size() - y_1.digits_.size());
-
-		auto z_0 = x_0.karatsuba_multiplication(y_0);
-		auto z_2 = x_1.karatsuba_multiplication(y_1);
-		// x_0 and x_1 won't be used after this point, so we'll reuse them as the sum of the two
-		x_1 += x_0;
-		// Same with y
-		y_1 += y_0;
-
-		auto z_1 = x_1.karatsuba_multiplication(y_1);
-		z_1 -= z_2;
-		z_1 -= z_0;
-
-		z_2.left_shift(2 * half);
-		z_1.left_shift(half);
-
-		z_1 += z_0;
-		z_1 += z_2;
-
-		return z_1;
+		auto ret =
+				karatsuba_multiplication_assume_positive(
+						BigIntView(*this, false),
+						BigIntView(rhs, false),
+						digits_.size() + rhs.digits_.size());
+		ret.negative_ = negative_ ^ rhs.negative_;
+		return ret;
 	}
 
 	//// Division methods
@@ -595,6 +603,13 @@ private:
 	digit_storage_t digits_;
 	bool negative_;
 
+	/// Private constructors
+
+	constexpr explicit BigInt(BigIntView view)
+		: digits_(view.digits_), negative_(false)
+	{}
+
+
 	//// Static constexpr member variables
 
 	static constexpr size_t long_multiplication_digit_threshold = 3;
@@ -625,6 +640,15 @@ private:
 		digits_.resize(toKeep);
 
 		return true;
+	}
+
+	constexpr BigInt &copy_digits_from(const BigInt &rhs)
+	{
+		digits_.resize(rhs.digits_.size());
+		for (size_t i = 0; i < digits_.size(); ++i)
+			digits_[i] = rhs.digits_[i];
+
+		return *this;
 	}
 
 	/// Addition methods
@@ -739,23 +763,113 @@ private:
 		return *this;
 	}
 
+	/// Multiplication methods
+
+	[[nodiscard]] constexpr static BigInt long_multiplication_assume_positive(BigIntView lhs, BigIntView rhs, size_t result_size)
+	{
+		assert(result_size >= lhs.digits_.size() + rhs.digits_.size() && "result_size too small to fit result");
+
+		digit_storage_t storage;
+		storage.reserve(result_size);
+
+		BigInt ret{std::move(storage), false};
+		ret.digits_.resize(lhs.digits_.size() + rhs.digits_.size());
+
+		for (size_t i = 0; i < lhs.digits_.size(); i++)
+		{
+			for (size_t j = 0; j < rhs.digits_.size(); j++)
+			{
+				uint64_t res =
+						static_cast<uint64_t>(ret.digits_[i + j]) +
+						static_cast<uint64_t>(lhs.digits_[i]) * static_cast<uint64_t>(rhs.digits_[j]);
+				ret.digits_[i + j + 1] += res / base;
+				ret.digits_[i + j] = static_cast<uint32_t>(res % base);
+			}
+		}
+
+		if (ret.digits_.back() == 0)
+			ret.digits_.pop_back();
+
+		return ret;
+	}
+
+	[[nodiscard]] constexpr static BigInt karatsuba_multiplication_assume_positive(BigIntView lhs, BigIntView rhs, size_t result_size)
+	{
+		if (lhs.digits_.size() < long_multiplication_digit_threshold || rhs.digits_.size() < long_multiplication_digit_threshold)
+		{
+			return long_multiplication_assume_positive(lhs, rhs, result_size);
+		}
+
+		const uint64_t n = lhs.digits_.size() > rhs.digits_.size() ? lhs.digits_.size() : rhs.digits_.size();
+		const uint64_t half = n / 2;
+		BigInt x_1 = get_copy_right_shifted_by(lhs, half);
+		BigInt x_0 = get_copy_of_lower_for_karatsuba(
+				lhs,
+				half,
+				static_cast<int64_t>(lhs.digits_.size()) - static_cast<int64_t>(x_1.digits_.size()));
+		BigInt y_1 = get_copy_right_shifted_by(rhs, half);
+
+		BigInt y_0 = get_copy_of_lower_for_karatsuba(
+				rhs,
+				half,
+				static_cast<int64_t>(rhs.digits_.size()) - static_cast<int64_t>(y_1.digits_.size()));
+
+		BigInt z_0 = karatsuba_multiplication_assume_positive(x_0, y_0,
+															  x_0.digits_.size() + y_0.digits_.size());
+		BigInt z_2 = karatsuba_multiplication_assume_positive(x_1, y_1,
+															  x_1.digits_.size() + y_1.digits_.size() + 2 * half + 1);// half^2
+		// x_0 and x_1 won't be used after this point, so we'll reuse them as the sum of the two
+		x_1 += x_0;
+		// Same with y
+		y_1 += y_0;
+
+		BigInt z_1 = karatsuba_multiplication_assume_positive(x_1, y_1,
+															  x_1.digits_.size() + y_1.digits_.size() + half + 1);// (half + 2)^2
+		z_1 -= z_2;
+		z_1 -= z_0;
+
+		z_2.left_shift(2 * half);// half^2 + 2 half
+		z_1.left_shift(half);    // (half + 2)^2 + half
+
+		z_1 += z_0;
+		z_1 += z_2;
+
+		// *this = z_1;
+		// return *this;
+		return z_1;
+	}
+
 	/// Static methods
 
-	static constexpr BigInt get_copy_right_shifted_by(const BigInt &other, uint64_t shift_by)
+	static constexpr BigInt get_copy_of_lower_for_karatsuba(BigIntView rhs, size_t half, int64_t n)
 	{
-		if (shift_by >= other.digits_.size())
+		if (half >= rhs.digits_.size())
+			return BigInt(rhs);
+
+		BigInt ret = BigInt(digit_storage_t(n));
+		for (size_t i = 0; i < n; i++)
+		{
+			ret.digits_[i] = rhs.digits_[i];
+		}
+
+		return ret;
+	}
+
+	static constexpr BigInt get_copy_right_shifted_by(BigIntView rhs, uint64_t shift_by)
+	{
+		if (shift_by >= rhs.digits_.size())
 		{
 			return 0;
 		}
 
 		digit_storage_t temp;
-		temp.reserve(other.digits_.size());
-		BigInt ret{std::move(temp), other.negative_};
-		ret.digits_.resize(other.digits_.size() - shift_by);
+		temp.reserve(rhs.digits_.size());
+		BigInt ret{std::move(temp), false};
+		ret.digits_.resize(rhs.digits_.size() - shift_by);
 
-		for (size_t i = 0; i < other.digits_.size() - shift_by; i++)
+		for (size_t i = 0; i < rhs.digits_.size() - shift_by; i++)
 		{
-			ret.digits_[i] = other.digits_[i + shift_by];
+			ret.digits_[i] = rhs.digits_[i + shift_by];
 		}
 
 		return ret;
